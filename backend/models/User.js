@@ -1,0 +1,113 @@
+const mongoose =require("mongoose");
+const bcrypt = require("bcryptjs");
+
+// address sub schema each user can have multiple saved address
+
+const addressSchema = new mongoose.Schema(
+  {
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    mobile: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    addressLine: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    pincode: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
+//user shema
+
+const userSchema = new mongoose.Schema({
+    name:{
+        type: String,
+        required:[true,"name is required"],
+        trim:true,
+    },
+    email:{
+        type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password:{
+      type:String,
+      required:[true,"Password is required"],
+      minlength:6,
+      selecte: false,
+    },
+
+
+    role:{
+        type:String,
+        enum:["user","admin"],
+        default:"user",
+    },
+
+    addresses: [addressSchema],
+
+    wishlist:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Product",
+        },
+    ],
+
+    isBlocked:{
+        type:Boolean,
+        default:false,
+    },
+
+},
+{
+    timestamps:true,
+});
+
+//passwordhashing 
+
+userSchema.pre("save",async function (next){
+    //only runs if password is modified
+    if (!this.isModified("password")){
+        return next();
+    }
+
+    //generate salt 
+    const salt = await bcrypt.genSalt(10);
+
+    this.password = await bcrypt.hash(this.password,salt);
+
+
+    next();
+
+
+});
+
+
+userSchema.methods.comparePassword = async function (enteredPassword){
+    return await bcrypt.compare(enteredPassword,this.password);
+};
+
+const User = mongoose.model("User",userSchema);
+
+export default User;
