@@ -35,7 +35,7 @@ const addressSchema = new mongoose.Schema(
   { _id: false }
 );
 
-//user shema
+//user schema
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -86,10 +86,10 @@ const userSchema = new mongoose.Schema({
 
 //passwordhashing 
 
-userSchema.pre("save",async function (next){
+userSchema.pre("save",async function (){
     //only runs if password is modified
     if (!this.isModified("password")){
-        return next();
+         return;
     }
 
     //generate salt 
@@ -98,7 +98,7 @@ userSchema.pre("save",async function (next){
     this.password = await bcrypt.hash(this.password,salt);
 
 
-    next();
+    
 
 
 });
@@ -110,4 +110,4 @@ userSchema.methods.comparePassword = async function (enteredPassword){
 
 const User = mongoose.model("User",userSchema);
 
-export default User;
+module.exports = User;
