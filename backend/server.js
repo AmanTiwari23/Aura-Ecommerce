@@ -4,6 +4,7 @@ const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const cors = require("cors")
 const authRoutes = require("./routes/authRoutes")
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 connectDB();
@@ -27,6 +28,7 @@ app.get("/",(req,res)=>{
     res.send("aura api is running");
 });
 app.use("/api/auth",authRoutes);
+app.use("/api/user",userRoutes);
 
 const PORT = process.env.PORT || 5000
 
