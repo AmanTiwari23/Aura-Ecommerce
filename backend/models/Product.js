@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Category = require("./Category");
+
 
 const sizeSchema = new mongoose.Schema(
     {
@@ -31,7 +31,7 @@ const productSchema = new mongoose.Schema(
             default:"Aura",
         },
 
-        Category:{
+        category:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Category",
             required:true,
