@@ -1,21 +1,12 @@
 const Product = require("../models/Product");
-const Category = require("../models/Category")
+const Category = require("../models/Category");
 
+const addProduct = async (req, res) => {
+  try {
+    const { name, category, description, price, discountPrice, colors, sizes } =
+      req.body;
 
-const addProduct = async (req,res)=>{
-    try{
-        const{
-            name,
-            category,
-            description,
-            price,
-            discountPrice,
-      colors,
-      sizes,
-    } = req.body;
-
-
-       if (!name || !category || !description || !price) {
+    if (!name || !category || !description || !price) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
@@ -25,14 +16,16 @@ const addProduct = async (req,res)=>{
       return res.status(400).json({ message: "Invalid category" });
     }
 
+    const images = req.files.map((file)=> file.path);
     const product = await Product.create({
       name,
       category,
       description,
       price,
       discountPrice,
-      colors,
-      sizes,
+      colors:JSON.parse(colors),
+      sizes:JSON.parse(sizes),
+      images,
     });
 
     res.status(201).json({
@@ -44,7 +37,7 @@ const addProduct = async (req,res)=>{
   }
 };
 
-  const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({ isActive: true })
       .populate("category", "name")
@@ -54,23 +47,21 @@ const addProduct = async (req,res)=>{
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-};  
+};
 
-
-const getSingleProduct = async (req,res)=>{
-  try{
+const getSingleProduct = async (req, res) => {
+  try {
     const product = await Product.findById(req.params.id).populate(
       "category",
       "name"
     );
 
-    if(!product){
-      return res.status(404).json({message:"Product not found"});
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
     }
     res.json(product);
-
-  }catch(err){
-    res.status(500).json({message: err.message});
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -78,4 +69,4 @@ module.exports = {
   addProduct,
   getAllProducts,
   getSingleProduct,
-}
+};

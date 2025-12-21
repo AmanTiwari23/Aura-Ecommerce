@@ -1,4 +1,5 @@
 const express = require("express");
+const upload = require("../config/multer");
 
 const {
     addProduct,
@@ -12,7 +13,7 @@ const {adminOnly} = require("../middleware/adminMiddleware");
 
 const router = express.Router();
 
-router.post("/",protect,adminOnly,addProduct);
+router.post("/",protect,adminOnly,upload.array("images",5), addProduct);
 
 router.get("/", getAllProducts);
 
