@@ -1,17 +1,20 @@
 const mongoose = require("mongoose");
 
-const orderItemSchema = new mongoose.Schema({
-  product: {
-    type: mongoose.Schema.Types.ObjectId,
-    red: "Product",
-    required: true,
+const orderItemSchema = new mongoose.Schema(
+  {
+    product: {
+      type: mongoose.Schema.Types.ObjectId,
+      red: "Product",
+      required: true,
+    },
+    name: String,
+    image: String,
+    size: String,
+    quantity: Number,
+    price: Number,
   },
-  name: String,
-  image: String,
-  size: String,
-  quantity: Number,
-  price: Number,
-}, { _id: false });
+  { _id: false }
+);
 
 const orderSchema = new mongoose.Schema(
   {
@@ -54,6 +57,9 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    razorpayOrderId: String,
+    razorpayPaymentId: String,
+    razorpaySignature: String,
   },
   { timestamps: true }
 );
