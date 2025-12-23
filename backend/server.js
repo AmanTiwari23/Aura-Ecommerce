@@ -1,5 +1,5 @@
 const express = require("express");
-const dotenv = require("dotenv");
+require("dotenv").config()
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 const cors = require("cors")
@@ -10,7 +10,11 @@ const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-dotenv.config();
+const adminRoutes = require("./routes/adminRoutes");
+const razorpay = require("./config/razorpay");
+
+
+
 connectDB();
 
 const app = express();
@@ -38,6 +42,7 @@ app.use("/api/products",productRoutes);
 app.use("/api/cart",cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 const PORT = process.env.PORT || 5000

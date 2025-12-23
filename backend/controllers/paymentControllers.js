@@ -1,6 +1,8 @@
 const razorpay = require("../config/razorpay");
 const crypto = require("crypto");
 const Order = require("../models/Order");
+const updateStock = require("../utils/updateStock");
+
 
 const createRazorpayOrder = async (req, res) => {
   try {
@@ -48,6 +50,8 @@ const verifyPayment = async (req, res) => {
     }
 
     order.paymentStatus = "Paid";
+    await updateStock(order.orderItems);
+
     order.razorpayOrderId = razorpay_order_id;
     order.razorpayPaymentId = razorpay_payment_id;
     order.razorpaySignature = razorpay_signature;

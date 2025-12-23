@@ -3,7 +3,7 @@ const { protect } = require("../middleware/authMiddleware");
 const {
   createRazorpayOrder,
   verifyPayment,
-} = require("../controllers/paymentController");
+} = require("../controllers/paymentControllers");
 
 const router = express.Router();
 

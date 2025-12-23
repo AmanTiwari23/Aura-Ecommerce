@@ -1,11 +1,12 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
+const updateStock = require("../utils/updateStock");
 
-const placeOrder = async (req,res)=>{
-    try{
-        const {shippingAddress,paymentMethod} = req.body;
+const placeOrder = async (req, res) => {
+  try {
+    const { shippingAddress, paymentMethod } = req.body;
 
-        const user  = await User.findById(req.user._id).populate("cart.product");
+    const user = await User.findById(req.user._id).populate("cart.product");
     if (!user.cart || user.cart.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
     }
@@ -24,6 +25,18 @@ const placeOrder = async (req,res)=>{
       0
     );
 
+    for (const item of user.cart) {
+  const product = await Product.findById(item.product);
+  const sizeObj = product.sizes.find(s => s.size === item.size);
+
+  if (!sizeObj || sizeObj.stock < item.quantity) {
+    return res.status(400).json({
+      message: `Insufficient stock for ${product.name} (${item.size})`
+    });
+  }
+}
+
+
     const order = await Order.create({
       user: user._id,
       orderItems,
@@ -32,6 +45,9 @@ const placeOrder = async (req,res)=>{
       totalAmount,
     });
 
+    if (paymentMethod === "COD") {
+      await updateStock(order.orderItems);
+    }
     // Clear cart after order
     user.cart = [];
     await user.save();
@@ -69,7 +85,6 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -96,8 +111,8 @@ const updateOrderStatus = async (req, res) => {
 };
 
 module.exports = {
-    updateOrderStatus,
-    getAllOrders,
-    placeOrder,
-    getMyOrders
-}
+  updateOrderStatus,
+  getAllOrders,
+  placeOrder,
+  getMyOrders,
+};
