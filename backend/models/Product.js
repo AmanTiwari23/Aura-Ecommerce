@@ -64,6 +64,7 @@ const productSchema = new mongoose.Schema(
                 type:String,
             },
         ],
+        sizes:[sizeSchema],
 
         isActive: {
             type:Boolean,

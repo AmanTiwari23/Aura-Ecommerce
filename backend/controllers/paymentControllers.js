@@ -2,7 +2,7 @@ const razorpay = require("../config/razorpay");
 const crypto = require("crypto");
 const Order = require("../models/Order");
 const updateStock = require("../utils/updateStock");
-
+const atomicUpdateStock = require("../utils/atomicUpdateStock");
 
 const createRazorpayOrder = async (req, res) => {
   try {
@@ -21,8 +21,6 @@ const createRazorpayOrder = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-
 
 const verifyPayment = async (req, res) => {
   try {
@@ -50,7 +48,8 @@ const verifyPayment = async (req, res) => {
     }
 
     order.paymentStatus = "Paid";
-    await updateStock(order.orderItems);
+
+    await atomicUpdateStock(order.orderItems);
 
     order.razorpayOrderId = razorpay_order_id;
     order.razorpayPaymentId = razorpay_payment_id;
@@ -64,5 +63,4 @@ const verifyPayment = async (req, res) => {
   }
 };
 
-
-module.exports = { createRazorpayOrder ,verifyPayment};
+module.exports = { createRazorpayOrder, verifyPayment };

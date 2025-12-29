@@ -1,5 +1,6 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
+const atomicUpdateStock = require("../utils/atomicUpdateStock");
 const updateStock = require("../utils/updateStock");
 
 const placeOrder = async (req, res) => {
@@ -46,7 +47,7 @@ const placeOrder = async (req, res) => {
     });
 
     if (paymentMethod === "COD") {
-      await updateStock(order.orderItems);
+      await atomicUpdateStock(order.orderItems);
     }
     // Clear cart after order
     user.cart = [];
