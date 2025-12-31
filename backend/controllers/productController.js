@@ -3,10 +3,23 @@ const Category = require("../models/Category");
 
 const addProduct = async (req, res) => {
   try {
-    const { name, category, description, price, discountPrice, colors, sizes } =
-      req.body;
+    const {
+      name,
+      categories,
+      description,
+      price,
+      discountPrice,
+      colors,
+      sizes,
+    } = req.body;
 
-    if (!name || !category || !description || !price) {
+    if (
+      !name ||
+      !categories ||
+      categories.length === 0 ||
+      !description ||
+      !price
+    ) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
@@ -16,15 +29,15 @@ const addProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid category" });
     }
 
-    const images = req.files.map((file)=> file.path);
+    const images = req.files.map((file) => file.path);
     const product = await Product.create({
       name,
-      category,
+      categories: JSON.parse(categories),
       description,
       price,
       discountPrice,
-      colors:JSON.parse(colors),
-      sizes:JSON.parse(sizes),
+      colors: JSON.parse(colors),
+      sizes: JSON.parse(sizes),
       images,
     });
 
