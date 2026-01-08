@@ -19,4 +19,6 @@ router.get("/", getAllProducts);
 
 router.get("/:id",getSingleProduct);
 
+router.get("/tag/:tag", getProductsByTag);
+
 module.exports = router;

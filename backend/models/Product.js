@@ -37,6 +37,14 @@ const productSchema = new mongoose.Schema(
       },
     ],
 
+    tags: [
+      {
+        type: String,
+        lowercase: true,
+        trim: true,
+      },
+    ],
+
     description: {
       type: String,
       required: true,

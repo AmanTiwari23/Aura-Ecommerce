@@ -11,6 +11,7 @@ const addProduct = async (req, res) => {
       discountPrice,
       colors,
       sizes,
+      tags,
     } = req.body;
 
     if (
@@ -33,6 +34,7 @@ const addProduct = async (req, res) => {
     const product = await Product.create({
       name,
       categories: JSON.parse(categories),
+      tags: tags ? JSON.parse(tags) : [],
       description,
       price,
       discountPrice,
@@ -78,8 +80,28 @@ const getSingleProduct = async (req, res) => {
   }
 };
 
+const getProductsByTag = async (req,res)=>{
+  try{
+
+    const tag = req.params.tag.toLowerCase();
+
+    const products = await Product.find({
+      tags: tag,
+      isActive: true,
+    })
+      .populate("categories", "name")
+      .sort({ createdAt: -1 });
+
+    res.json(products);
+
+  }catch(error){
+    res.status(500).json({message:error.message})
+  }
+}
+
 module.exports = {
   addProduct,
   getAllProducts,
   getSingleProduct,
+  getProductsByTag,
 };

@@ -70,9 +70,7 @@ const ProductDetails = () => {
       {/* Details */}
       <div>
         <h1 className="text-3xl font-bold">{product.name}</h1>
-        <p className="text-gray-600 mt-2">
-          {product.category?.name}
-        </p>
+        <p className="text-gray-600 mt-2">{product.category?.name}</p>
 
         <div className="mt-4 text-2xl font-semibold">
           ₹{product.discountPrice || product.price}
@@ -89,15 +87,21 @@ const ProductDetails = () => {
                 key={color}
                 onClick={() => setSelectedColor(color)}
                 className={`px-4 py-1 border ${
-                  selectedColor === color
-                    ? "bg-black text-white"
-                    : ""
+                  selectedColor === color ? "bg-black text-white" : ""
                 }`}
               >
                 {color}
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="flex gap-2 mt-2">
+          {product.tags.map((tag) => (
+            <span key={tag} className="text-xs bg-gray-200 px-2 py-1 rounded">
+              {tag.replace("-", " ")}
+            </span>
+          ))}
         </div>
 
         {/* Sizes */}
@@ -110,9 +114,7 @@ const ProductDetails = () => {
                 disabled={s.stock === 0}
                 onClick={() => setSelectedSize(s.size)}
                 className={`px-4 py-1 border ${
-                  selectedSize === s.size
-                    ? "bg-black text-white"
-                    : ""
+                  selectedSize === s.size ? "bg-black text-white" : ""
                 } ${s.stock === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 {s.size}
