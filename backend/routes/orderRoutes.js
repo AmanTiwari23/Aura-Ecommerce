@@ -16,6 +16,6 @@ router.get("/my-orders", protect, getMyOrders);
 
 /* Admin */
 router.get("/", protect, adminOnly, getAllOrders);
-router.put("/:id", protect, adminOnly, updateOrderStatus);
+router.put("/:id/status", protect, adminOnly, updateOrderStatus);
 
 module.exports = router;

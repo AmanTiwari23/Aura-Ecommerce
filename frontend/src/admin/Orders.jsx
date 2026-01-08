@@ -33,7 +33,32 @@ const AdminOrders = () => {
               <td className="p-3">{order._id}</td>
               <td>{order.user?.name}</td>
               <td>₹{order.totalAmount}</td>
-              <td>{order.orderStatus}</td>
+              <td>
+                <select
+                  value={order.orderStatus}
+                  onChange={async (e) => {
+                    const newStatus = e.target.value;
+
+                    await api.put(`/orders/${order._id}/status`, {
+                      status: newStatus,
+                    });
+
+                    setOrders((prev) =>
+                      prev.map((o) =>
+                        o._id === order._id
+                          ? { ...o, orderStatus: newStatus }
+                          : o
+                      )
+                    );
+                  }}
+                  className="border px-2 py-1"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="Packed">Packed</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Delivered">Delivered</option>
+                </select>
+              </td>
             </tr>
           ))}
         </tbody>
