@@ -14,32 +14,45 @@ const addProduct = async (req, res) => {
       tags,
     } = req.body;
 
+    // ✅ Parse JSON FIRST
+    const parsedCategories = JSON.parse(categories);
+    const parsedColors = JSON.parse(colors);
+    const parsedSizes = JSON.parse(sizes);
+    const parsedTags = tags ? JSON.parse(tags) : [];
+
+    // ✅ Now validate
     if (
       !name ||
-      !categories ||
-      categories.length === 0 ||
+      !parsedCategories ||
+      parsedCategories.length === 0 ||
       !description ||
       !price
     ) {
       return res.status(400).json({ message: "Required fields missing" });
     }
 
-    // Check category exists
-    const categoryExists = await Category.findById(category);
-    if (!categoryExists) {
-      return res.status(400).json({ message: "Invalid category" });
+    // ✅ Validate categories exist
+    const categoryCount = await Category.countDocuments({
+      _id: { $in: parsedCategories },
+    });
+
+    if (categoryCount !== parsedCategories.length) {
+      return res
+        .status(400)
+        .json({ message: "One or more categories are invalid" });
     }
 
-    const images = req.files.map((file) => file.path);
+    const images = req.files ? req.files.map((file) => file.path) : [];
+
     const product = await Product.create({
       name,
-      categories: JSON.parse(categories),
-      tags: tags ? JSON.parse(tags) : [],
+      categories: parsedCategories,
+      tags: parsedTags,
       description,
       price,
       discountPrice,
-      colors: JSON.parse(colors),
-      sizes: JSON.parse(sizes),
+      colors: parsedColors,
+      sizes: parsedSizes,
       images,
     });
 
@@ -52,10 +65,12 @@ const addProduct = async (req, res) => {
   }
 };
 
+
+
 const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({ isActive: true })
-      .populate("category", "name")
+      .populate("categories", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json(products);
@@ -67,7 +82,7 @@ const getAllProducts = async (req, res) => {
 const getSingleProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
-      "category",
+      "categories",
       "name"
     );
 

@@ -5,6 +5,7 @@ const {
     addProduct,
     getSingleProduct,
     getAllProducts,
+    getProductsByTag,
 } = require("../controllers/productController");
 
 const { protect} = require("../middleware/authMiddleware");

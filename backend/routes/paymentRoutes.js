@@ -7,7 +7,7 @@ const {
 
 const router = express.Router();
 
-router.post("/create-order", protect, createRazorpayOrder);
+router.post("/razorpay", protect, createRazorpayOrder);
 router.post("/verify", protect, verifyPayment);
 
 module.exports = router;

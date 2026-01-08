@@ -11,6 +11,7 @@ import Orders from "./pages/Orders";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import AdminRoute from "./components/AdminRoute";
 import Dashboard from "./admin/Dashboard";
+import Checkout from "./pages/Checkout";
 
 const App = () => {
   return (
@@ -32,7 +33,16 @@ const App = () => {
           }
         />
 
-         <Route
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin/dashboard"
           element={
             <AdminRoute>
@@ -40,7 +50,6 @@ const App = () => {
             </AdminRoute>
           }
         />
-
       </Routes>
     </BrowserRouter>
   );
