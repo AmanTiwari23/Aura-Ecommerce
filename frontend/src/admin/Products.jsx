@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import ProductForm from "./ProductForm";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  const fetchProducts = async () => {
+    const res = await api.get("/products");
+    setProducts(res.data);
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const res = await api.get("/products");
-      setProducts(res.data);
-    };
-
     fetchProducts();
   }, []);
 
@@ -17,22 +19,35 @@ const AdminProducts = () => {
     <div>
       <h1 className="text-2xl font-bold mb-4">Products</h1>
 
-      <table className="w-full bg-white shadow">
+      <ProductForm
+        product={editingProduct}
+        onSuccess={() => {
+          setEditingProduct(null);
+          fetchProducts();
+        }}
+      />
+
+      <table className="w-full mt-8 bg-white shadow">
         <thead>
-          <tr className="border-b">
-            <th className="p-3">Name</th>
+          <tr>
+            <th>Name</th>
             <th>Price</th>
-            <th>Categories</th>
+            <th>Edit</th>
           </tr>
         </thead>
 
         <tbody>
-          {products.map((product) => (
-            <tr key={product._id} className="border-b">
-              <td className="p-3">{product.name}</td>
-              <td>₹{product.price}</td>
+          {products.map((p) => (
+            <tr key={p._id} className="border-t">
+              <td>{p.name}</td>
+              <td>₹{p.price}</td>
               <td>
-                {product.categories.map((c) => c.name).join(", ")}
+                <button
+                  onClick={() => setEditingProduct(p)}
+                  className="text-blue-500"
+                >
+                  Edit
+                </button>
               </td>
             </tr>
           ))}

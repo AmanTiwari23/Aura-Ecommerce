@@ -12,6 +12,10 @@ import ProtectedRoutes from "./components/ProtectedRoutes";
 import AdminRoute from "./components/AdminRoute";
 import Dashboard from "./admin/Dashboard";
 import Checkout from "./pages/Checkout";
+import AdminLayout from "./admin/AdminLayout";
+import AdminOrders from "./admin/Orders";
+import AdminProducts from "./admin/Products";
+import AdminUsers from "./admin/Users";
 
 const App = () => {
   return (
@@ -36,9 +40,9 @@ const App = () => {
         <Route
           path="/checkout"
           element={
-            <ProtectedRoute>
+            <ProtectedRoutes>
               <Checkout />
-            </ProtectedRoute>
+            </ProtectedRoutes>
           }
         />
 

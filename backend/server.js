@@ -12,6 +12,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const razorpay = require("./config/razorpay");
+const bannerRoutes = require("./routes/bannerRoutes");
 
 
 
@@ -43,6 +44,7 @@ app.use("/api/cart",cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/banners", bannerRoutes);
 
 
 const PORT = process.env.PORT || 5000
