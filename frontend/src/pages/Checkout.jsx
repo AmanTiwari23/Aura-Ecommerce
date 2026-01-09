@@ -44,7 +44,9 @@ const Checkout = () => {
         paymentMethod: "COD",
       });
 
-      navigate("/orders");
+     navigate(`/order-success/${order._id}`);
+
+
       return;
     }
 
@@ -72,7 +74,8 @@ const Checkout = () => {
             shippingAddress: shipping,
           });
 
-          navigate("/orders");
+          navigate(`/order-success/${res.data.order._id}`);
+
         } catch (err) {
           alert("Payment verification failed");
         }

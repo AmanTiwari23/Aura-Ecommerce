@@ -34,7 +34,9 @@ const Navbar = () => {
         {user ? (
           <>
             <span className="text-sm ">Hi, {user.name}</span>
-            <Link to="/orders">Orders</Link>
+            <Link to="/orders" className="hover:underline">
+              My Orders
+            </Link>
 
             {user.role === "admin" && <Link to="/admin/dashboard">Admin</Link>}
 

@@ -19,6 +19,8 @@ import AdminUsers from "./admin/Users";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { loadUser } from "./redux/authSlice";
+import MyOrders from "./pages/MyOrders";
+import OrderSuccess from "./pages/OrderSuccess";
 
 
 const App = () => {
@@ -42,7 +44,7 @@ useEffect(() => {
           path="/orders"
           element={
             <ProtectedRoutes>
-              <Orders />
+              <MyOrders />
             </ProtectedRoutes>
           }
         />
@@ -55,6 +57,8 @@ useEffect(() => {
             </ProtectedRoutes>
           }
         />
+        <Route path="/order-success/:id" element={<OrderSuccess />} />
+
 
         <Route
           path="/admin"
