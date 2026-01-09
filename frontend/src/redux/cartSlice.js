@@ -1,51 +1,45 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../services/api";
 
-export const addToCart = createAsyncThunk(
-  "cart/add",
-  async (data, thunkAPI) => {
-    try {
-      const res = await api.post("/cart", data);
-      return res.data.cart;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
-    }
-  }
-);
-
-export const getCart = createAsyncThunk("cart/get", async (_, thunkAPI) => {
+// Add to cart
+export const addToCart = createAsyncThunk("cart/add", async (data, thunkAPI) => {
   try {
-    const res = await api.get("/cart");
-    return res.data;
+    const res = await api.post("/cart", data);
+    return res.data; // ✅ backend returns array
   } catch (err) {
-    return thunkAPI.rejectWithValue(err.response.data.message);
+    return thunkAPI.rejectWithValue(err.response?.data?.message);
   }
 });
 
-export const updateCartQty = createAsyncThunk(
-  "cart/update",
-  async (data, thunkAPI) => {
-    try {
-      const res = await api.put("/cart", data);
-      return res.data.cart;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
-    }
+// Get cart
+export const getCart = createAsyncThunk("cart/get", async (_, thunkAPI) => {
+  try {
+    const res = await api.get("/cart");
+    return res.data; // ✅ array
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message);
   }
-);
+});
 
-
-export const removeFromCart = createAsyncThunk(
-  "cart/remove",
-  async ({ productId, size }, thunkAPI) => {
-    try {
-      const res = await api.delete(`/cart/${productId}/${size}`);
-      return res.data.cart;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
-    }
+// Update quantity
+export const updateCartQty = createAsyncThunk("cart/update", async (data, thunkAPI) => {
+  try {
+    const res = await api.put("/cart", data);
+    return res.data; // ✅ array
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message);
   }
-);
+});
+
+// Remove item
+export const removeFromCart = createAsyncThunk("cart/remove", async ({ productId, size }, thunkAPI) => {
+  try {
+    const res = await api.delete(`/cart/${productId}/${size}`);
+    return res.data; // ✅ array
+  } catch (err) {
+    return thunkAPI.rejectWithValue(err.response?.data?.message);
+  }
+});
 
 const cartSlice = createSlice({
   name: "cart",
@@ -56,23 +50,25 @@ const cartSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
+    const safeSet = (state, action) => {
+      state.items = Array.isArray(action.payload) ? action.payload : [];
+      state.loading = false;
+    };
+
     builder
-    .addCase(getCart.fulfilled, (state, action) => {
-        state.items = action.payload;
+      .addCase(getCart.pending, (state) => {
+        state.loading = true;
       })
+      .addCase(getCart.fulfilled, safeSet)
+
       .addCase(addToCart.pending, (state) => {
         state.loading = true;
       })
-      .addCase(addToCart.fulfilled, (state, action) => {
-        state.loading = false;
-        state.items = action.payload;
-      })
-      .addCase(updateCartQty.fulfilled, (state, action) => {
-        state.items = action.payload;
-      })
-      .addCase(removeFromCart.fulfilled, (state, action) => {
-        state.items = action.payload;
-      })
+      .addCase(addToCart.fulfilled, safeSet)
+
+      .addCase(updateCartQty.fulfilled, safeSet)
+      .addCase(removeFromCart.fulfilled, safeSet)
+
       .addCase(addToCart.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;

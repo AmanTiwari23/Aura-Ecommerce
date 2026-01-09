@@ -30,8 +30,9 @@ const createCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find({ isActive: true })
-      .sort({ createdAt: -1 });
+    const categories = await Category.find({ isActive: true }).sort({
+      name: 1,
+    });
 
     res.status(200).json(categories);
   } catch (error) {

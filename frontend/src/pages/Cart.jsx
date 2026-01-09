@@ -1,10 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getCart,
-  updateCartQty,
-  removeFromCart,
-} from "../redux/cartSlice";
+import { getCart, updateCartQty, removeFromCart } from "../redux/cartSlice";
 import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
@@ -55,18 +51,14 @@ const Cart = () => {
           className="flex gap-4 border-b py-4"
         >
           <img
-            src={item.product.images[0]}
-            alt={item.product.name}
+            src={item.product?.images?.[0] || "/placeholder.png"}
+            alt={item.product?.name}
             className="w-24 h-24 object-cover"
           />
 
           <div className="flex-1">
-            <h2 className="font-semibold">
-              {item.product.name}
-            </h2>
-            <p className="text-sm text-gray-600">
-              Size: {item.size}
-            </p>
+            <h2 className="font-semibold">{item.product.name}</h2>
+            <p className="text-sm text-gray-600">Size: {item.size}</p>
             <p>₹{item.price}</p>
 
             <div className="flex items-center gap-2 mt-2">
