@@ -1,8 +1,9 @@
-import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../services/api";
 
 export const registerUser = createAsyncThunk(
-    "auth/register", async (formData, thunkAPI) => {
+  "auth/register",
+  async (formData, thunkAPI) => {
     try {
       const res = await api.post("/auth/register", formData);
       return res.data.user;
@@ -11,7 +12,6 @@ export const registerUser = createAsyncThunk(
     }
   }
 );
-
 
 export const loginUser = createAsyncThunk(
   "auth/login",
@@ -25,26 +25,25 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk("auth/logout", async () => {
+  await api.post("/auth/logout");
+});
 
-export const logoutUser = createAsyncThunk(
-  "auth/logout",
-  async () => {
-    await api.post("/auth/logout");
-  }
-);
-
+export const loadUser = createAsyncThunk("auth/load", async () => {
+  const res = await api.get("/auth/me");
+  return res.data;
+});
 
 const authSlice = createSlice({
-    name:"auth",
-    initialState:{
-        user:null,
-        loading:false,
-        error:null
-    },
-    reducers:{},
+  name: "auth",
+  initialState: {
+    user: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {},
 
-
-extraReducers: (builder) => {
+  extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
@@ -70,6 +69,9 @@ extraReducers: (builder) => {
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
+      })
+      .addCase(loadUser.fulfilled, (state, action) => {
+        state.user = action.payload;
       });
   },
 });

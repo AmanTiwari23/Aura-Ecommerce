@@ -42,7 +42,8 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/products",productRoutes);
 app.use("/api/cart",cartRoutes);
 app.use("/api/orders", orderRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/api/payments", paymentRoutes);
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/banners", bannerRoutes);
 

@@ -1,15 +1,32 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
+const Product = require("../models/Product");
 const atomicUpdateStock = require("../utils/atomicUpdateStock");
-const updateStock = require("../utils/updateStock");
 
 const placeOrder = async (req, res) => {
   try {
     const { shippingAddress, paymentMethod } = req.body;
 
-    const user = await User.findById(req.user._id).populate("cart.product");
+    const user = await User.findById(req.user._id).populate(
+      "cart.product",
+      "name images sizes"
+    );
+
     if (!user.cart || user.cart.length === 0) {
       return res.status(400).json({ message: "Cart is empty" });
+    }
+
+    // Check stock
+    for (const item of user.cart) {
+      const sizeObj = item.product.sizes.find(
+        (s) => s.size === item.size
+      );
+
+      if (!sizeObj || sizeObj.stock < item.quantity) {
+        return res.status(400).json({
+          message: `Insufficient stock for ${item.product.name} (${item.size})`,
+        });
+      }
     }
 
     const orderItems = user.cart.map((item) => ({
@@ -26,30 +43,21 @@ const placeOrder = async (req, res) => {
       0
     );
 
-    for (const item of user.cart) {
-  const product = await Product.findById(item.product);
-  const sizeObj = product.sizes.find(s => s.size === item.size);
-
-  if (!sizeObj || sizeObj.stock < item.quantity) {
-    return res.status(400).json({
-      message: `Insufficient stock for ${product.name} (${item.size})`
-    });
-  }
-}
-
-
     const order = await Order.create({
       user: user._id,
       orderItems,
       shippingAddress,
       paymentMethod,
       totalAmount,
+      isPaid: paymentMethod === "COD",
+      paidAt: paymentMethod === "COD" ? Date.now() : null,
     });
 
     if (paymentMethod === "COD") {
       await atomicUpdateStock(order.orderItems);
     }
-    // Clear cart after order
+
+    // Clear cart
     user.cart = [];
     await user.save();
 
@@ -58,6 +66,7 @@ const placeOrder = async (req, res) => {
       order,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -91,11 +100,10 @@ const updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     const allowedStatus = ["Pending", "Packed", "Shipped", "Delivered"];
-
-     if (!allowedStatus.includes(status)) {
+    if (!allowedStatus.includes(status)) {
       return res.status(400).json({ message: "Invalid order status" });
     }
-    
+
     const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });

@@ -29,7 +29,7 @@ const Checkout = () => {
   };
 
   const placeOrderHandler = async () => {
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
     alert("Cart is empty");
     return;
   }
@@ -37,26 +37,23 @@ const Checkout = () => {
   setLoading(true);
 
   try {
-    // 1️⃣ Create order in DB
-    const orderRes = await api.post("/orders", {
-      shippingAddress: shipping,
-      paymentMethod,
-    });
-
-    const orderId = orderRes.data.order._id;
-
-    // 2️⃣ COD FLOW
+    // COD flow
     if (paymentMethod === "COD") {
+      await api.post("/orders", {
+        shippingAddress: shipping,
+        paymentMethod: "COD",
+      });
+
       navigate("/orders");
       return;
     }
 
-    // 3️⃣ ONLINE PAYMENT FLOW
-    const razorRes = await api.post("/payments/razorpay", {
-      orderId,
-    });
+    // ONLINE PAYMENT FLOW
 
-    const { orderId: razorpayOrderId, amount, currency } = razorRes.data;
+    // 1️⃣ Create Razorpay Order from CART
+    const razorRes = await api.post("/payments/razorpay");
+
+    const { id: razorpayOrderId, amount, currency } = razorRes.data;
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -72,7 +69,7 @@ const Checkout = () => {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            orderId,
+            shippingAddress: shipping,
           });
 
           navigate("/orders");

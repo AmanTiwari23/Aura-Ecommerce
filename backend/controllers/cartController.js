@@ -46,10 +46,10 @@ const addToCart = async (req, res) => {
 
 const getCart = async (req, res) => {
   try {
-    const cart = await User.findById(req.user._id)
-      .select("cart")
+    const user = await User.findById(req.user._id)
       .populate("cart.product", "name images price");
-      res.json(user.cart);
+
+    res.json(user.cart || []);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -89,10 +89,11 @@ const updateCartQuantity = async (req, res) => {
     }
 
      if (quantity <= 0) {
-      user.cart = user.cart.filter(
-        (i) => i.product.toString() !== productId
-      );
-    } else {
+  user.cart = user.cart.filter(
+    (i) => !(i.product.toString() === productId && i.size === size)
+  );
+}
+ else {
       item.quantity = quantity;
     }
     await user.save();

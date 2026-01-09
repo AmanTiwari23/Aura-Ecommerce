@@ -16,10 +16,17 @@ import AdminLayout from "./admin/AdminLayout";
 import AdminOrders from "./admin/Orders";
 import AdminProducts from "./admin/Products";
 import AdminUsers from "./admin/Users";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { loadUser } from "./redux/authSlice";
 
 
 const App = () => {
-  
+  const dispatch = useDispatch();
+
+useEffect(() => {
+  dispatch(loadUser());
+}, []);
 
   return (
     <BrowserRouter>
