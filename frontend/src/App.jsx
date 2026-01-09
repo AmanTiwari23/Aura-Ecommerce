@@ -7,13 +7,13 @@ import Shop from "./pages/Shop";
 import ProductDetails from "./pages/ProductDetails";
 import Cart from "./pages/Cart";
 import Navbar from "./components/Navbar";
-import Orders from "./pages/Orders";
+
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import AdminRoute from "./components/AdminRoute";
 import Dashboard from "./admin/Dashboard";
 import Checkout from "./pages/Checkout";
 import AdminLayout from "./admin/AdminLayout";
-import AdminOrders from "./admin/Orders";
+import AdminOrders from "./admin/AdminOrders";
 import AdminProducts from "./admin/Products";
 import AdminUsers from "./admin/Users";
 import { useDispatch } from "react-redux";
