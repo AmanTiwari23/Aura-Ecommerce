@@ -21,6 +21,7 @@ import { useEffect } from "react";
 import { loadUser } from "./redux/authSlice";
 import MyOrders from "./pages/MyOrders";
 import OrderSuccess from "./pages/OrderSuccess";
+import Wishlist from "./pages/Wishlist";
 
 
 const App = () => {
@@ -40,6 +41,8 @@ useEffect(() => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+
         <Route
           path="/orders"
           element={

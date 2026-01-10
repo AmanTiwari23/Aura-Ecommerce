@@ -13,7 +13,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const razorpay = require("./config/razorpay");
 const bannerRoutes = require("./routes/bannerRoutes");
-
+const wishlistRoutes = require("./routes/wishlistRoutes")
 
 
 connectDB();
@@ -46,6 +46,8 @@ app.use("/api/payments", paymentRoutes);
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/banners", bannerRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+
 
 
 const PORT = process.env.PORT || 5000

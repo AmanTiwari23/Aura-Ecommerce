@@ -109,7 +109,7 @@ const verifyPayment = async (req, res) => {
     });
 
    
-    await atomicUpdateStock(order.orderItems);
+    // await atomicUpdateStock(order.orderItems);
 
     
     user.cart = [];

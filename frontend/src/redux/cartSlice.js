@@ -48,7 +48,12 @@ const cartSlice = createSlice({
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearCart: (state) => {
+    state.items = [];
+  },
+
+  },
   extraReducers: (builder) => {
     const safeSet = (state, action) => {
       state.items = Array.isArray(action.payload) ? action.payload : [];
@@ -77,3 +82,5 @@ const cartSlice = createSlice({
 });
 
 export default cartSlice.reducer;
+export const { clearCart } = cartSlice.actions;
+

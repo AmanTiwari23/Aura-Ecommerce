@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
+import OrderTimeline from "../components/OrderTimeline";
 
 const OrderSuccess = () => {
   const { id } = useParams();
@@ -20,6 +21,7 @@ const OrderSuccess = () => {
 
       <p className="mb-4">Order ID: {order._id}</p>
       <p className="mb-4">Payment: {order.paymentMethod}</p>
+        <OrderTimeline status={order.orderStatus} />
 
       <div className="border p-4">
         {order.orderItems.map((item) => (

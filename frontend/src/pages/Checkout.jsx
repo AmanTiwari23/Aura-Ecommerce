@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
+import { clearCart } from "../redux/cartSlice";
 
 const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const { items } = useSelector((state) => state.cart);
 
   const [shipping, setShipping] = useState({
@@ -22,94 +22,96 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
 
   const changeHandler = (e) => {
-    setShipping({
-      ...shipping,
-      [e.target.name]: e.target.value,
-    });
+    setShipping({ ...shipping, [e.target.name]: e.target.value });
   };
 
-  const placeOrderHandler = async () => {
-  if (!items || items.length === 0) {
-    alert("Cart is empty");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    // COD flow
-    if (paymentMethod === "COD") {
-      await api.post("/orders", {
+  /* ============================
+        VERIFY PAYMENT
+  ============================ */
+  const verifyPayment = async (response) => {
+    try {
+      const verifyRes = await api.post("/payments/verify", {
+        razorpay_order_id: response.razorpay_order_id,
+        razorpay_payment_id: response.razorpay_payment_id,
+        razorpay_signature: response.razorpay_signature,
         shippingAddress: shipping,
-        paymentMethod: "COD",
       });
 
-     navigate(`/order-success/${order._id}`);
+      dispatch(clearCart());
+      navigate(`/order-success/${verifyRes.data.order._id}`);
+    } catch (err) {
+      console.error("Verify failed:", err.response?.data || err);
+      alert("Payment verification failed");
+    }
+  };
 
-
+  /* ============================
+        PLACE ORDER
+  ============================ */
+  const placeOrderHandler = async () => {
+    if (!items || items.length === 0) {
+      alert("Cart is empty");
       return;
     }
 
-    // ONLINE PAYMENT FLOW
+    setLoading(true);
 
-    // 1️⃣ Create Razorpay Order from CART
-    const razorRes = await api.post("/payments/razorpay");
+    try {
+      /* ---------- COD ---------- */
+      if (paymentMethod === "COD") {
+        const res = await api.post("/orders", {
+          shippingAddress: shipping,
+          paymentMethod: "COD",
+        });
 
-    const { id: razorpayOrderId, amount, currency } = razorRes.data;
+        dispatch(clearCart());
+        navigate(`/order-success/${res.data.order._id}`);
+        return;
+      }
 
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount,
-      currency,
-      name: "Aura",
-      description: "Aura Clothing Purchase",
-      order_id: razorpayOrderId,
+      /* ---------- RAZORPAY ---------- */
+      const razorRes = await api.post("/payments/razorpay");
 
-      handler: async function (response) {
-        try {
-          await api.post("/payments/verify", {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            shippingAddress: shipping,
-          });
+      const { id, amount, currency } = razorRes.data;
 
-          navigate(`/order-success/${res.data.order._id}`);
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount,
+        currency,
+        name: "Aura",
+        description: "Aura Clothing Purchase",
+        order_id: id,
 
-        } catch (err) {
-          alert("Payment verification failed");
-        }
-      },
+        handler: function (response) {
+          verifyPayment(response);
+        },
 
-      prefill: {
-        name: shipping.fullName,
-        contact: shipping.mobile,
-      },
+        prefill: {
+          name: shipping.fullName,
+          contact: shipping.mobile,
+        },
 
-      theme: {
-        color: "#000000",
-      },
-    };
+        theme: {
+          color: "#000000",
+        },
+      };
 
-    const razorpay = new window.Razorpay(options);
-    razorpay.open();
-  } catch (err) {
-    alert(err.response?.data?.message || "Checkout failed");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (err) {
+      alert(err.response?.data?.message || "Checkout failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
 
-      {/* Shipping Address */}
+      {/* Shipping */}
       <div className="border p-4 mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Shipping Address
-        </h2>
+        <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
 
         {[
           ["fullName", "Full Name"],
@@ -130,11 +132,9 @@ const Checkout = () => {
         ))}
       </div>
 
-      {/* Payment Method */}
+      {/* Payment */}
       <div className="border p-4 mb-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Payment Method
-        </h2>
+        <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
 
         <label className="block mb-2">
           <input
@@ -155,7 +155,6 @@ const Checkout = () => {
         </label>
       </div>
 
-      {/* Place Order */}
       <button
         onClick={placeOrderHandler}
         disabled={loading}

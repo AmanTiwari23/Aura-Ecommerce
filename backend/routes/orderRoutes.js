@@ -6,13 +6,16 @@ const {
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
+  getSingleOrder
 } = require("../controllers/orderController");
 
 const router = express.Router();
 
 /* User */
 router.post("/", protect, placeOrder);
-router.get("/my-orders", protect, getMyOrders);
+router.get("/my", protect, getMyOrders);
+router.get("/:id", protect, getSingleOrder);
+
 
 /* Admin */
 router.get("/", protect, adminOnly, getAllOrders);
