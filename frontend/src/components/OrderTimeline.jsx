@@ -1,36 +1,72 @@
-const steps = ["Pending", "Packed", "Shipped", "Delivered"];
+import { 
+  FiClock, 
+  FiPackage, 
+  FiTruck, 
+  FiCheckCircle, 
+  FiChevronRight 
+} from "react-icons/fi";
+
+const steps = [
+  { label: "Pending", icon: <FiClock /> },
+  { label: "Packed", icon: <FiPackage /> },
+  { label: "Shipped", icon: <FiTruck /> },
+  { label: "Delivered", icon: <FiCheckCircle /> },
+];
 
 const OrderTimeline = ({ status }) => {
-  const activeIndex = steps.indexOf(status);
+  const activeIndex = steps.findIndex(s => s.label === status);
 
   return (
-    <div className="flex items-center justify-between my-6">
-      {steps.map((step, index) => (
-        <div key={step} className="flex-1 flex items-center">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center text-white 
-              ${index <= activeIndex ? "bg-green-500" : "bg-gray-300"}`}
-          >
-            {index + 1}
-          </div>
+    <div className="w-full py-12 px-4">
+      <div className="relative flex items-center justify-between">
+        
+        {/* Background Connector Line */}
+        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-zinc-100 -translate-y-1/2 z-0" />
+        
+        {/* Active Progress Line */}
+        <div 
+          className="absolute top-1/2 left-0 h-[2px] bg-black -translate-y-1/2 z-0 transition-all duration-700 ease-in-out" 
+          style={{ width: `${(activeIndex / (steps.length - 1)) * 100}%` }}
+        />
 
-          <span
-            className={`ml-2 ${
-              index <= activeIndex ? "font-bold text-green-600" : "text-gray-500"
-            }`}
-          >
-            {step}
-          </span>
+        {steps.map((step, index) => {
+          const isCompleted = index <= activeIndex;
+          const isCurrent = index === activeIndex;
 
-          {index !== steps.length - 1 && (
-            <div
-              className={`flex-1 h-1 mx-2 ${
-                index < activeIndex ? "bg-green-500" : "bg-gray-300"
-              }`}
-            />
-          )}
-        </div>
-      ))}
+          return (
+            <div key={step.label} className="relative z-10 flex flex-col items-center">
+              {/* Icon Circle */}
+              <div
+                className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${
+                  isCompleted 
+                    ? "bg-black text-white border-black shadow-xl scale-110" 
+                    : "bg-white text-zinc-300 border-zinc-100"
+                }`}
+              >
+                <span className="text-xl">
+                    {/* If completed but not current, show a checkmark, else show step icon */}
+                    {isCompleted && !isCurrent && index !== steps.length -1 ? <FiCheckCircle /> : step.icon}
+                </span>
+              </div>
+
+              {/* Label */}
+              <div className="absolute top-14 flex flex-col items-center min-w-[100px]">
+                <span className={`text-[10px] uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
+                  isCompleted ? "text-black" : "text-zinc-400"
+                }`}>
+                  {step.label}
+                </span>
+                
+                {isCurrent && (
+                  <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-1 animate-pulse">
+                    In Progress
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

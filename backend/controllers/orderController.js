@@ -2,9 +2,7 @@ const Order = require("../models/Order");
 const User = require("../models/User");
 const atomicUpdateStock = require("../utils/atomicUpdateStock");
 
-/* =============================
-   PLACE ORDER (COD)
-============================= */
+
 const placeOrder = async (req, res) => {
   try {
     const { shippingAddress, paymentMethod } = req.body;
@@ -18,7 +16,7 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    // Stock check
+    
     for (const item of user.cart) {
       const sizes = item.product.sizes || [];
       const sizeObj = sizes.find((s) => s.size === item.size);
@@ -67,9 +65,7 @@ const placeOrder = async (req, res) => {
   }
 };
 
-/* =============================
-   GET MY ORDERS
-============================= */
+
 const getMyOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({
@@ -81,9 +77,7 @@ const getMyOrders = async (req, res) => {
   }
 };
 
-/* =============================
-   GET ALL ORDERS (ADMIN)
-============================= */
+
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -96,9 +90,7 @@ const getAllOrders = async (req, res) => {
   }
 };
 
-/* =============================
-   GET SINGLE ORDER
-============================= */
+
 const getSingleOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate(
@@ -110,7 +102,7 @@ const getSingleOrder = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Only owner or admin can view
+   
     if (
       order.user._id.toString() !== req.user._id.toString() &&
       req.user.role !== "admin"
@@ -124,9 +116,7 @@ const getSingleOrder = async (req, res) => {
   }
 };
 
-/* =============================
-   UPDATE ORDER STATUS (ADMIN)
-============================= */
+
 const updateOrderStatus = async (req, res) => {
   try {
     const { status } = req.body;

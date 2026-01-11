@@ -2,70 +2,65 @@ const Product = require("../models/Product");
 const Category = require("../models/Category");
 
 const addProduct = async (req, res) => {
+  console.log("👉 1. Controller Started"); 
+
   try {
-    const {
+    
+    console.log("👉 2. Request Body:", req.body);
+    console.log("👉 3. Request Files:", req.files);
+
+    const { name, price, discountPrice, description, categories, tags, colors, sizes } = req.body;
+
+    
+    const safeParse = (data, fieldName) => {
+      try {
+        if (!data) return [];
+        if (typeof data === "object") return data; 
+        return JSON.parse(data);
+      } catch (e) {
+        console.log(`⚠️ Warning: Could not JSON parse ${fieldName}, using split fallback.`);
+        return typeof data === "string" ? data.split(",").map(i => i.trim()) : [];
+      }
+    };
+
+    console.log("👉 4. Parsing Data...");
+    const parsedCategories = safeParse(categories, "categories");
+    const parsedSizes = safeParse(sizes, "sizes");
+    const parsedTags = safeParse(tags, "tags");
+    const parsedColors = safeParse(colors, "colors");
+
+    
+    console.log("👉 5. Validating...");
+    if (!name || !price || !description) throw new Error("Missing Name, Price, or Description");
+    if (parsedSizes.length === 0) throw new Error("Sizes are required (e.g. [{size:'M', stock:10}])");
+
+    
+    console.log("👉 6. Processing Images...");
+    const imagePaths = req.files ? req.files.map(file => file.path || file.secure_url) : [];
+
+  
+    console.log("👉 7. Saving to MongoDB...");
+    const newProduct = await Product.create({
       name,
-      categories,
       description,
-      price,
-      discountPrice,
-      colors,
-      sizes,
-      tags,
-    } = req.body;
-
-    // ✅ Parse JSON FIRST
-    const parsedCategories = JSON.parse(categories);
-    const parsedColors = JSON.parse(colors);
-    const parsedSizes = JSON.parse(sizes);
-    const parsedTags = tags ? JSON.parse(tags) : [];
-
-    // ✅ Now validate
-    if (
-      !name ||
-      !parsedCategories ||
-      parsedCategories.length === 0 ||
-      !description ||
-      !price
-    ) {
-      return res.status(400).json({ message: "Required fields missing" });
-    }
-
-    // ✅ Validate categories exist
-    const categoryCount = await Category.countDocuments({
-      _id: { $in: parsedCategories },
-    });
-
-    if (categoryCount !== parsedCategories.length) {
-      return res
-        .status(400)
-        .json({ message: "One or more categories are invalid" });
-    }
-
-    const images = req.files ? req.files.map((file) => file.path) : [];
-
-    const product = await Product.create({
-      name,
+      price: Number(price),
+      discountPrice: discountPrice ? Number(discountPrice) : 0,
       categories: parsedCategories,
       tags: parsedTags,
-      description,
-      price,
-      discountPrice,
       colors: parsedColors,
       sizes: parsedSizes,
-      images,
+      images: imagePaths
     });
 
-    res.status(201).json({
-      message: "Product added successfully",
-      product,
-    });
+    console.log("✅ 8. Success!");
+    res.status(201).json({ message: "Product created!", product: newProduct });
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ CRASH AT STEP:", error.message);
+    
+    res.status(500).json({ message: error.message, stack: error.stack });
   }
 };
-
-
 
 const getAllProducts = async (req, res) => {
   try {
@@ -97,9 +92,7 @@ const getSingleProduct = async (req, res) => {
 
 const getProductsByTag = async (req,res)=>{
   try{
-
     const tag = req.params.tag.toLowerCase();
-
     const products = await Product.find({
       tags: tag,
       isActive: true,
@@ -113,10 +106,25 @@ const getProductsByTag = async (req,res)=>{
     res.status(500).json({message:error.message})
   }
 }
+const deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      await product.deleteOne(); 
+      res.json({ message: "Product removed" });
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   addProduct,
   getAllProducts,
   getSingleProduct,
   getProductsByTag,
+  deleteProduct,
 };

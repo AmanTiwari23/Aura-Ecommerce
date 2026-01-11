@@ -1,2 +1,28 @@
-
 @import "tailwindcss";
+
+@theme {
+  /* Define the animation name and properties */
+  --animate-loading-bar: loading-bar 1.5s infinite linear;
+
+  /* Define the keyframes */
+  @keyframes loading-bar {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Custom fade-in for page transitions */
+@layer components {
+  .animate-fadeIn {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}

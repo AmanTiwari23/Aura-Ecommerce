@@ -1,3 +1,7 @@
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; 
+
+
 const express = require("express");
 require("dotenv").config()
 const connectDB = require("./config/db");
@@ -37,7 +41,7 @@ app.get("/",(req,res)=>{
     res.send("aura api is running");
 });
 app.use("/api/auth",authRoutes);
-app.use("/api/user",userRoutes);
+app.use("/api/users",userRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products",productRoutes);
 app.use("/api/cart",cartRoutes);
@@ -52,7 +56,6 @@ app.use("/api/wishlist", wishlistRoutes);
 
 const PORT = process.env.PORT || 5000
 
-
-app.listen(PORT,()=>{
-    console.log("server running on port 5000");
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`); // Use backticks for dynamic logging
 });

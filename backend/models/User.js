@@ -1,7 +1,6 @@
 const mongoose =require("mongoose");
 const bcrypt = require("bcryptjs");
 
-// address sub schema each user can have multiple saved address
 
 const addressSchema = new mongoose.Schema(
   {
@@ -35,7 +34,7 @@ const addressSchema = new mongoose.Schema(
   { _id: false }
 );
 
-//user schema
+
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -106,15 +105,15 @@ const userSchema = new mongoose.Schema({
     timestamps:true,
 });
 
-//passwordhashing 
+
 
 userSchema.pre("save",async function (){
-    //only runs if password is modified
+   
     if (!this.isModified("password")){
          return;
     }
 
-    //generate salt 
+    
     const salt = await bcrypt.genSalt(10);
 
     this.password = await bcrypt.hash(this.password,salt);

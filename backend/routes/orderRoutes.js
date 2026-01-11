@@ -11,13 +11,13 @@ const {
 
 const router = express.Router();
 
-/* User */
+
 router.post("/", protect, placeOrder);
 router.get("/my", protect, getMyOrders);
 router.get("/:id", protect, getSingleOrder);
 
 
-/* Admin */
+
 router.get("/", protect, adminOnly, getAllOrders);
 router.put("/:id/status", protect, adminOnly, updateOrderStatus);
 

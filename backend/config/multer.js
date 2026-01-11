@@ -1,17 +1,18 @@
 const multer = require("multer");
-const{CloudinaryStorage} = require("multer-storage-cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("./cloudinary");
 
 const storage = new CloudinaryStorage({
-    cloudinary:cloudinary,
-    
-        params:{
-            folder:"aura/products",
-            allowed_formats:["jpg","jpeg","png","webp"],
-        },
-    
+  cloudinary: cloudinary,
+  params: {
+    folder: "aura/products",
+    resource_type: "auto",
+  },
 });
 
-const upload = multer({storage});
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 } 
+});
 
 module.exports = upload;

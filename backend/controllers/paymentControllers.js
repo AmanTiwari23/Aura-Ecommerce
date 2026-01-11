@@ -42,7 +42,7 @@ const verifyPayment = async (req, res) => {
       shippingAddress,
     } = req.body;
 
-    // 🔥 Validate Razorpay fields
+   
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return res.status(400).json({ message: "Missing Razorpay payment fields" });
     }
@@ -109,7 +109,7 @@ const verifyPayment = async (req, res) => {
     });
 
    
-    // await atomicUpdateStock(order.orderItems);
+   
 
     
     user.cart = [];
