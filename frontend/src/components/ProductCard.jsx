@@ -45,7 +45,7 @@ const ProductCard = ({ product }) => {
           <FiHeart size={18} />
         </button>
 
-        {/* Discount Badge */}
+     
         {product.discountPrice && (
           <div className="absolute top-4 left-0 bg-black text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 z-10">
             Sale
@@ -76,7 +76,7 @@ const ProductCard = ({ product }) => {
           )}
         </div>
 
-        {/* View Product Action */}
+      
         <Link
           to={`/product/${product._id}`}
           className="mt-6 flex items-center justify-center gap-2 w-full bg-black text-white py-3.5 text-[11px] font-bold uppercase tracking-[0.2em] transition-all duration-300 hover:bg-zinc-800"

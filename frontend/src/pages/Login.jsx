@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice"; // Importing your existing thunk
+import { loginUser } from "../redux/authSlice"; 
 import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
 
@@ -15,7 +15,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Get state from your auth slice
+  
   const { user, loading, error } = useSelector((state) => state.auth);
 
   // 1. Redirect if already logged in

@@ -35,7 +35,6 @@ const AdminUsers = () => {
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get Initials for Avatar
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };

@@ -13,7 +13,7 @@ const OrderSuccess = () => {
     api.get(`/orders/${id}`)
       .then((res) => {
         setOrder(res.data);
-        // Only show success toast once on initial load
+        
         toast.success("Order confirmed and secured", {
             icon: '✅',
             style: { borderRadius: '0px', background: '#000', color: '#fff' }
@@ -33,7 +33,7 @@ const OrderSuccess = () => {
     <div className="min-h-screen bg-zinc-50/50 py-12 px-6">
       <div className="max-w-4xl mx-auto">
         
-        {/* Success Header */}
+        
         <div className="text-center mb-12 animate-fadeIn">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-black text-white rounded-full mb-6">
             <FiCheckCircle size={32} />
@@ -44,10 +44,10 @@ const OrderSuccess = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Left Column: Details & Items */}
+          
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Tracking Section */}
+            
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100">
                <div className="flex justify-between items-center mb-6">
                   <h2 className="text-[11px] font-black uppercase tracking-widest text-zinc-400">Order Tracking</h2>
@@ -56,13 +56,13 @@ const OrderSuccess = () => {
                <OrderTimeline status={order.orderStatus} />
             </div>
 
-            {/* Items List */}
+          
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100">
               <h2 className="text-[11px] font-black uppercase tracking-widest text-zinc-400 mb-8">Purchase Summary</h2>
               <div className="space-y-6">
                 {order.orderItems.map((item) => (
                   <div key={item._id} className="flex gap-6 items-center">
-                    <div className="w-20 h-24 bg-zinc-100 flex-shrink-0 overflow-hidden rounded-lg">
+                    <div className="w-20 h-24 bg-zinc-100 shrink-0 overflow-hidden rounded-lg">
                       <img src={item.image} className="w-full h-full object-cover" alt={item.name} />
                     </div>
                     <div className="flex-1">
@@ -79,7 +79,7 @@ const OrderSuccess = () => {
             </div>
           </div>
 
-          {/* Right Column: Billing & Actions */}
+         
           <div className="space-y-6">
             <div className="bg-black text-white p-8 rounded-2xl shadow-xl">
               <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] mb-8 text-zinc-500">Invoice Details</h2>

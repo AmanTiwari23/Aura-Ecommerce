@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../services/api";
 
-// --- Async Thunks ---
+
 
 export const registerUser = createAsyncThunk(
   "auth/register",
@@ -35,7 +35,7 @@ export const logoutUser = createAsyncThunk("auth/logout", async () => {
   try {
     await api.post("/auth/logout");
   } finally {
-    // Always clear local storage even if the server-side logout fails
+
     localStorage.removeItem("userInfo");
   }
 });

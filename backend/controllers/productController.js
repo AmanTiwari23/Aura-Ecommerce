@@ -213,9 +213,8 @@ const updateProduct = async (req, res) => {
     if (colors) product.colors = safeParse(colors);
     if (sizes) product.sizes = safeParse(sizes);
 
-    // 5. Update Images (Only if new files are uploaded)
+    
     // If user uploaded new images, we replace the old ones. 
-    // If you want to append, use: [...product.images, ...newPaths]
     if (req.files && req.files.length > 0) {
       const newImages = req.files.map(file => file.path || file.secure_url);
       product.images = newImages; 

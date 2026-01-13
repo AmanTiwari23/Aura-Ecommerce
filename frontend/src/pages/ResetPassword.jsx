@@ -10,7 +10,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
-    email: location.state?.email || "", // Grab email from previous page state
+    email: location.state?.email || "", 
     otp: "",
     newPassword: ""
   });
@@ -35,7 +35,7 @@ const ResetPassword = () => {
         <h1 className="text-4xl font-black uppercase tracking-tighter mb-8 text-center">Reset Password</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email (Disabled - just for reference) */}
+          
           <input
             type="email"
             value={formData.email}
@@ -43,7 +43,7 @@ const ResetPassword = () => {
             className="w-full bg-zinc-100 border border-zinc-200 p-4 text-[11px] font-bold uppercase tracking-widest rounded-xl opacity-50 cursor-not-allowed"
           />
 
-          {/* OTP Input */}
+          
           <div className="relative group">
             <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-black" />
             <input
@@ -57,7 +57,7 @@ const ResetPassword = () => {
             />
           </div>
 
-          {/* New Password */}
+        
           <div className="relative group">
             <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-black" />
             <input

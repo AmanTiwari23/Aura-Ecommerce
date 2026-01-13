@@ -5,7 +5,7 @@ import { FiX, FiCheck } from "react-icons/fi";
 const FilterSidebar = ({ filters, setFilters, clearFilters, closeSidebar }) => {
   const [categories, setCategories] = useState([]);
   
-  // Common colors for fashion apps
+
   const colors = ["Black", "White", "Navy", "Beige", "Red", "Green", "Grey"];
 
   useEffect(() => {

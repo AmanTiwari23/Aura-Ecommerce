@@ -62,15 +62,15 @@ const Cart = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        {/* Left: Cart Items List */}
+      
         <div className="lg:col-span-8 space-y-8">
           {items.map((item) => (
             <div
               key={item.product._id + item.size}
               className="flex flex-col sm:flex-row gap-6 pb-8 border-b border-zinc-100 group"
             >
-              {/* Image Container */}
-              <div className="w-full sm:w-32 aspect-[3/4] bg-zinc-100 overflow-hidden">
+             
+              <div className="w-full sm:w-32 aspect-3/4 bg-zinc-100 overflow-hidden">
                 <img
                   src={item.product?.images?.[0] || "/placeholder.png"}
                   alt={item.product?.name}
@@ -78,7 +78,7 @@ const Cart = () => {
                 />
               </div>
 
-              {/* Item Info */}
+              
               <div className="flex-1 flex flex-col justify-between py-1">
                 <div className="flex justify-between items-start">
                   <div>
@@ -90,7 +90,7 @@ const Cart = () => {
                   <p className="font-black text-sm">₹{item.price.toLocaleString()}</p>
                 </div>
 
-                {/* Actions Row */}
+               
                 <div className="flex items-center justify-between mt-6 sm:mt-0">
                   <div className="flex items-center border border-zinc-200">
                     <button
@@ -122,7 +122,7 @@ const Cart = () => {
           ))}
         </div>
 
-        {/* Right: Order Summary Sidebar */}
+        
         <div className="lg:col-span-4 sticky top-24">
           <div className="bg-zinc-50 p-8 rounded-xl border border-zinc-100">
             <h2 className="text-xs font-black uppercase tracking-[0.2em] mb-6 text-zinc-900">Order Summary</h2>

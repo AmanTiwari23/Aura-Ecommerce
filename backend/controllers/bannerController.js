@@ -20,7 +20,7 @@ const getAllBanners = async (req, res) => {
   }
 };
 
-// Add new banner
+
 const addBanner = async (req, res) => {
   try {
     const { image, link } = req.body;

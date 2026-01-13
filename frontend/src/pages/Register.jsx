@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../redux/authSlice";
-import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi"; // Modern Icons
-import toast from "react-hot-toast"; // Modern Notifications
+import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi"; 
+import toast from "react-hot-toast"; 
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -17,7 +17,7 @@ const Register = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
-    // Use loading toast for professional feedback
+    
     const registerToast = toast.loading("Creating your Aura profile...");
 
     const res = await dispatch(registerUser({ name, email, password }));

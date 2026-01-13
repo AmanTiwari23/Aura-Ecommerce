@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../services/api";
-import { FiTrash2, FiPlus, FiTag, FiAlertTriangle } from "react-icons/fi"; // Added Alert Icon
+import { FiTrash2, FiPlus, FiTag, FiAlertTriangle } from "react-icons/fi"; 
 import toast from "react-hot-toast";
 
 const AdminCategories = () => {
@@ -8,7 +8,6 @@ const AdminCategories = () => {
   const [newCategory, setNewCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // --- FETCH CATEGORIES ---
   const fetchCategories = async () => {
     try {
       const { data } = await api.get("/categories");
@@ -22,32 +21,32 @@ const AdminCategories = () => {
     fetchCategories();
   }, []);
 
-  // --- CREATE HANDLER ---
+  
   const submitHandler = async (e) => {
     e.preventDefault();
     if (!newCategory.trim()) return;
 
-    // 1. Show Loading Toast
+    
     const toastId = toast.loading("Creating category...");
 
     try {
       setLoading(true);
       await api.post("/categories", { name: newCategory });
       
-      // 2. Update Toast on Success
+   
       toast.success("Category created!", { id: toastId });
       
       setNewCategory("");
       fetchCategories(); 
     } catch (error) {
-      // 3. Update Toast on Error
+     
       toast.error(error.response?.data?.message || "Failed to create category", { id: toastId });
     } finally {
       setLoading(false);
     }
   };
 
-  // --- DELETE HANDLER (With Custom Toast) ---
+
   const deleteHandler = (id) => {
     toast((t) => (
       <div className="flex flex-col gap-2">
@@ -86,7 +85,7 @@ const AdminCategories = () => {
     });
   };
 
-  // Actual Delete Logic (Called only if user clicks Yes)
+  
   const confirmDelete = async (id) => {
     const toastId = toast.loading("Deleting...");
     try {
@@ -107,8 +106,8 @@ const AdminCategories = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         
-        {/* 1. Add Category Form */}
-        <div className="bg-zinc-50 p-8 rounded-[2rem] h-fit">
+        
+        <div className="bg-zinc-50 p-8 rounded-4xl h-fit">
           <h2 className="text-xl font-bold uppercase tracking-widest mb-6">Add New</h2>
           <form onSubmit={submitHandler} className="space-y-4">
             <div>
@@ -131,7 +130,6 @@ const AdminCategories = () => {
           </form>
         </div>
 
-        {/* 2. Categories List */}
         <div>
           <h2 className="text-xl font-bold uppercase tracking-widest mb-6">Existing Collections</h2>
           <div className="space-y-3">

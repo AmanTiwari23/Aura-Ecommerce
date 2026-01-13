@@ -3,7 +3,7 @@ const generateToken = require("../utils/generateToken");
 const sendEmail = require("../utils/sendEmail"); // 1. Import your email utility
 const crypto = require("crypto");
 
-// @desc    Register user
+//     Register user
 const registerUser = async (req, res) => {
   try {
     const { email, name, password, role } = req.body;
@@ -23,7 +23,7 @@ const registerUser = async (req, res) => {
   }
 };
 
-// @desc    Login user
+//     Login user
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -44,13 +44,13 @@ const loginUser = async (req, res) => {
   }
 };
 
-// @desc    Logout user
+//     Logout user
 const logoutUser = (req, res) => {
   res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
   res.status(200).json({ message: "Logged out" });
 };
 
-// @desc    Update Password (Logged-in user)
+//    Update Password (Logged-in user)
 const updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -68,7 +68,7 @@ const updatePassword = async (req, res) => {
   }
 };
 
-// @desc    Forgot Password - Send OTP to Email
+//   Forgot Password - Send OTP to Email
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -109,7 +109,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// @desc    Reset Password via OTP
+//     Reset Password via OTP
 const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;

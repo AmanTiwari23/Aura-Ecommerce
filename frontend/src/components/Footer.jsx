@@ -29,7 +29,7 @@ const Footer = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           
-          {/* Brand & Newsletter */}
+         
           <div className="lg:col-span-1">
             <h2 className="text-2xl font-black tracking-[0.2em] mb-6">AURA</h2>
             <p className="text-zinc-500 text-sm leading-relaxed mb-6">

@@ -57,5 +57,5 @@ app.use("/api/wishlist", wishlistRoutes);
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`); // Use backticks for dynamic logging
+    console.log(`Server running on port ${PORT}`); 
 });

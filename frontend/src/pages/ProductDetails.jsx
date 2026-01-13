@@ -11,9 +11,8 @@ import {
   FiMessageSquare, 
   FiCheckCircle,
   FiArrowRight
-} from "react-icons/fi"; // Modern Icons
-import toast from "react-hot-toast"; // Modern Notifications
-
+} from "react-icons/fi"; 
+import toast from "react-hot-toast"; 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -95,19 +94,19 @@ const ProductDetails = () => {
     <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
         
-        {/* Left: Cinematic Image Gallery */}
+        
         <div className="space-y-4">
-          <div className="aspect-[3/4] overflow-hidden bg-zinc-100 rounded-2xl">
+          <div className="aspect-3/4 overflow-hidden bg-zinc-100 rounded-2xl">
             <img
               src={product.images[0]}
               alt={product.name}
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
             />
           </div>
-          {/* If you have more images, they would go here in a grid */}
+         
         </div>
 
-        {/* Right: Product Info (Sticky) */}
+        
         <div className="lg:sticky lg:top-24 space-y-8">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.3em] text-zinc-400 mb-2">

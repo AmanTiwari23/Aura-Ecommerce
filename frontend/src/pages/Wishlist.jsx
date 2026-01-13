@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getWishlist, toggleWishlist } from "../redux/wishlistSlice"; // Assuming toggle handles removal
+import { getWishlist, toggleWishlist } from "../redux/wishlistSlice"; 
 import { Link } from "react-router-dom";
 import { FiHeart, FiTrash2, FiShoppingBag, FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
@@ -39,7 +39,7 @@ const Wishlist = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 lg:py-20">
-      {/* Header */}
+      
       <div className="flex justify-between items-end mb-12 border-b border-zinc-100 pb-8">
         <div>
           <h1 className="text-4xl font-black uppercase tracking-tighter text-zinc-900">
@@ -54,13 +54,13 @@ const Wishlist = () => {
         </button>
       </div>
 
-      {/* Wishlist Grid */}
+      
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
         {items.map((p) => (
           <div key={p._id} className="group relative bg-white">
             
-            {/* Image Section */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-zinc-100 rounded-2xl shadow-sm">
+           
+            <div className="relative aspect-3/4 overflow-hidden bg-zinc-100 rounded-2xl shadow-sm">
               <Link to={`/product/${p._id}`}>
                 <img 
                   src={p.images[0]} 
@@ -69,7 +69,7 @@ const Wishlist = () => {
                 />
               </Link>
 
-              {/* Quick Remove Button */}
+             
               <button 
                 onClick={() => handleRemove(p._id)}
                 className="absolute top-4 right-4 p-3 bg-white/90 backdrop-blur-sm rounded-full text-zinc-900 shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-red-500 hover:text-white"
@@ -79,7 +79,7 @@ const Wishlist = () => {
               </button>
             </div>
 
-            {/* Info Section */}
+           
             <div className="mt-4 space-y-2">
               <div className="flex justify-between items-start">
                 <Link to={`/product/${p._id}`}>

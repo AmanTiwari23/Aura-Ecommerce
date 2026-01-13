@@ -6,19 +6,24 @@ const {
   getMyOrders,
   getAllOrders,
   updateOrderStatus,
-  getSingleOrder
+  getSingleOrder,
+  getSalesStats 
 } = require("../controllers/orderController");
 
 const router = express.Router();
 
+router.get("/sales-stats", protect, adminOnly, getSalesStats);
 
 router.post("/", protect, placeOrder);
 router.get("/my", protect, getMyOrders);
-router.get("/:id", protect, getSingleOrder);
-
 
 
 router.get("/", protect, adminOnly, getAllOrders);
-router.put("/:id/status", protect, adminOnly, updateOrderStatus);
+
+
+router
+  .route("/:id")
+  .get(protect, getSingleOrder)
+  .put(protect, adminOnly, updateOrderStatus); 
 
 module.exports = router;

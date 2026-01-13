@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiScissors, FiGlobe, FiTarget, FiArrowRight } from "react-icons/fi";
 
-/* --- REUSABLE COMPONENTS --- */
+
 const Marquee = ({ text }) => (
   <div className="bg-zinc-900 text-zinc-500 py-3 overflow-hidden whitespace-nowrap border-y border-zinc-800">
     <div className="inline-block animate-marquee">
@@ -22,17 +22,16 @@ const Stat = ({ number, label }) => (
   </div>
 );
 
-/* --- MAIN PAGE --- */
+
 const About = () => {
-  // Scroll to top on load
+ 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
     <div className="bg-white overflow-hidden">
-      
-      {/* 1. CINEMATIC HERO */}
+     
       <div className="relative h-[70vh] bg-black flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 opacity-40">
           <img 
@@ -53,8 +52,8 @@ const About = () => {
 
       <Marquee text="Defining the Modern Silhouette • Quality Over Quantity •" />
 
-      {/* 2. THE ORIGIN STORY */}
-      <div className="max-w-[1400px] mx-auto px-6 py-24 md:py-32">
+  
+      <div className="max-w-350 mx-auto px-6 py-24 md:py-32">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
           <div className="space-y-8">
             <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none">
@@ -74,12 +73,12 @@ const About = () => {
             <img 
               src="https://fontmeme.com/permalink/250111/Signature.png" 
               alt="Signature" 
-              className="h-12 opacity-50 mt-8" // You can replace this with a real signature image
+              className="h-12 opacity-50 mt-8" 
             />
           </div>
           
           <div className="relative">
-            <div className="aspect-[3/4] bg-zinc-100 rounded-[2rem] overflow-hidden">
+            <div className="aspect-3/4 bg-zinc-100 rounded-4xl overflow-hidden">
                <img 
                  src="https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1887&auto=format&fit=crop" 
                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0"
@@ -94,9 +93,9 @@ const About = () => {
         </div>
       </div>
 
-      {/* 3. CORE PILLARS */}
+      
       <div className="bg-zinc-50 py-24 border-y border-zinc-200">
-        <div className="max-w-[1400px] mx-auto px-6">
+        <div className="max-w-350 mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             
             <div className="group p-8 bg-white border border-zinc-100 hover:border-black transition-colors duration-500">
@@ -127,7 +126,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* 4. STATS BREAK */}
+      
       <div className="py-24">
         <div className="max-w-5xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12">
           <Stat number="01" label="Flagship Store" />
@@ -137,8 +136,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* 5. VISUAL GALLERY (GRID) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 h-[400px] md:h-[600px]">
+      <div className="grid grid-cols-2 md:grid-cols-4 h-100 md:h-150">
         <img src="https://images.unsplash.com/photo-1594938298603-c8148c4dae35?q=80&w=1780&auto=format&fit=crop" className="w-full h-full object-cover" alt="Fabric" />
         <img src="https://images.unsplash.com/photo-1596558450255-7c0b7be9d56a?q=80&w=2070&auto=format&fit=crop" className="w-full h-full object-cover" alt="Sketch" />
         <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=1974&auto=format&fit=crop" className="w-full h-full object-cover" alt="Sewing" />

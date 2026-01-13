@@ -1,8 +1,9 @@
 const Order = require("../models/Order");
 const User = require("../models/User");
+const Product = require("../models/Product"); 
 const atomicUpdateStock = require("../utils/atomicUpdateStock");
 
-
+//   Place new order
 const placeOrder = async (req, res) => {
   try {
     const { shippingAddress, paymentMethod } = req.body;
@@ -16,7 +17,6 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ message: "Cart is empty" });
     }
 
-    
     for (const item of user.cart) {
       const sizes = item.product.sizes || [];
       const sizeObj = sizes.find((s) => s.size === item.size);
@@ -48,98 +48,126 @@ const placeOrder = async (req, res) => {
       shippingAddress,
       paymentMethod,
       totalAmount,
-      paymentStatus: paymentMethod === "COD" ? "Paid" : "Pending",
+      paymentStatus: paymentMethod === "COD" ? "Pending" : "Paid", 
       orderStatus: "Placed",
     });
 
-    if (paymentMethod === "COD") {
-      await atomicUpdateStock(order.orderItems);
-    }
+    await atomicUpdateStock(order.orderItems);
 
     user.cart = [];
     await user.save();
 
-    res.status(201).json({ message: "Order placed", order });
+    res.status(201).json({ message: "Order placed successfully", order });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
+//    Get logged in user orders
 const getMyOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user._id }).sort({
-      createdAt: -1,
-    });
+    const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
+//    Get all orders (Admin)
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "name email")
       .sort({ createdAt: -1 });
-
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-
-const getSingleOrder = async (req, res) => {
+//     Update order status (Admin)
+const updateOrderStatus = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id).populate(
-      "user",
-      "name email"
-    );
-
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+    const { status } = req.body;
+    const allowed = ["Placed", "Packed", "Shipped", "Delivered", "Cancelled"];
+    
+    if (!status || !allowed.includes(status)) {
+      return res.status(400).json({ message: "Invalid or missing status" });
     }
 
-   
-    if (
-      order.user._id.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
-      return res.status(403).json({ message: "Not authorized" });
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.orderStatus = status;
+
+    if (status === "Delivered") {
+      order.paymentStatus = "Paid";
+      order.deliveredAt = Date.now();
     }
 
-    res.json(order);
+    const updatedOrder = await order.save();
+    res.json({ message: `Order marked as ${status}`, order: updatedOrder });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
 
-const updateOrderStatus = async (req, res) => {
+//   Get Sales Stats for Recharts (Last 7 Days)
+//   GET /api/orders/sales-stats
+const getSalesStats = async (req, res) => {
   try {
-    const { status } = req.body;
+    const stats = await Order.aggregate([
+      {
+        $match: {
+          orderStatus: { $ne: "Cancelled" }, 
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          totalSales: { $sum: "$totalAmount" },
+          orderCount: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+      { $limit: 7 }
+    ]);
 
-    const allowed = ["Placed", "Packed", "Shipped", "Delivered", "Cancelled"];
-    if (!allowed.includes(status)) {
-      return res.status(400).json({ message: "Invalid status" });
-    }
+    res.status(200).json(stats);
+  } catch (error) {
+    console.error("Aggregation Error:", error);
+    res.status(500).json({ message: "Failed to generate sales stats" });
+  }
+};
 
-    const order = await Order.findById(req.params.id);
-    if (!order) {
-      return res.status(404).json({ message: "Order not found" });
-    }
+//   Get Overall Dashboard Stats (Cards)
+//   GET /api/admin/stats
+const getAdminStats = async (req, res) => {
+  try {
+    const totalOrders = await Order.countDocuments();
+    const totalProducts = await Product.countDocuments();
+    const totalUsers = await User.countDocuments();
+    
+    const orders = await Order.find({ orderStatus: { $ne: "Cancelled" } });
+    const totalRevenue = orders.reduce((acc, item) => acc + item.totalAmount, 0);
 
-    order.orderStatus = status;
+    res.json({
+      totalOrders,
+      totalProducts,
+      totalUsers,
+      totalRevenue
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-    if (status === "Delivered") {
-      order.paymentStatus = "Paid";
-    }
-
-    await order.save();
-
-    res.json({ message: "Status updated", order });
+const getSingleOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate("user", "name email");
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    res.json(order);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -151,4 +179,6 @@ module.exports = {
   getAllOrders,
   getSingleOrder,
   updateOrderStatus,
+  getSalesStats,
+  getAdminStats,
 };

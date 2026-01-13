@@ -4,14 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import { loadUser } from "./redux/authSlice";
 
-// Components & Layouts
+
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoutes from "./components/ProtectedRoutes";
 import AdminRoute from "./components/AdminRoute";
 import AdminLayout from "./admin/AdminLayout";
 
-// User Pages
+
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -28,16 +28,14 @@ import Dashboard from "./admin/Dashboard";
 import AdminOrders from "./admin/AdminOrders";
 import AdminProducts from "./admin/Products";
 import AdminUsers from "./admin/Users";
-import AdminBanners from "./admin/AdminBanners"; // NEW: Added Banner Management Import
+import AdminBanners from "./admin/AdminBanners"; 
 import About from "./pages/About";
 import AdminCategories from "./admin/AdminCategories";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Profile from "./pages/Profile";
 
-/**
- * Utility: ScrollToTop
- * Ensures the user starts at the top of the page on every route change.
- */
+
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
@@ -54,10 +52,6 @@ const App = () => {
     dispatch(loadUser());
   }, [dispatch]);
 
-  /**
-   * Global Splash Screen
-   * Prevents layout shifts and accidental redirects during initial auth check.
-   */
   if (loading) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-white">
@@ -73,10 +67,10 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      {/* Logic Utilities */}
+      
       <ScrollToTop />
 
-      {/* Global Notifications */}
+      
       <Toaster
         position="top-center"
         toastOptions={{
@@ -101,7 +95,7 @@ const App = () => {
 
         <main className="grow">
           <Routes>
-            {/* --- Public Routes --- */}
+            
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -113,14 +107,16 @@ const App = () => {
             <Route path="/about" element={<About />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/profile" element={<Profile />} />
+  
 
-            {/* --- User Protected Routes --- */}
+            
             <Route element={<ProtectedRoutes />}>
               <Route path="/orders" element={<MyOrders />} />
               <Route path="/checkout" element={<Checkout />} />
             </Route>
 
-            {/* --- Admin Protected Routes (Nested) --- */}
+            
             <Route
               path="/admin"
               element={
@@ -129,18 +125,18 @@ const App = () => {
                 </AdminRoute>
               }
             >
-              {/* index is equivalent to path="/admin" */}
+             
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="users" element={<AdminUsers />} />
-              {/* NEW: Added Banner Route */}
+             
               <Route path="banners" element={<AdminBanners />} />
               <Route path="categories" element={<AdminCategories />} />
             </Route>
 
-            {/* --- 404 Handling --- */}
+            
             <Route
               path="*"
               element={

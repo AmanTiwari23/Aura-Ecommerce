@@ -145,10 +145,10 @@ const Home = () => {
             />
 
             {/* --- 2. EDITORIAL SECTION (MEN'S FOCUSED) --- */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[600px] mb-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-150 mb-32">
               
               {/* Left: The Linen Edit */}
-              <Link to="/shop?tag=linen" className="relative group overflow-hidden rounded-[2rem] cursor-pointer">
+              <Link to="/shop?tag=linen" className="relative group overflow-hidden rounded-4xl cursor-pointer">
                 <img 
                   src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=2070&auto=format&fit=crop" 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
@@ -169,7 +169,7 @@ const Home = () => {
               </Link>
 
               {/* Right: Midnight Series */}
-              <Link to="/shop?tag=streetwear" className="relative group overflow-hidden rounded-[2rem] cursor-pointer">
+              <Link to="/shop?tag=streetwear" className="relative group overflow-hidden rounded-4xl cursor-pointer">
                 <img 
                   src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=1887&auto=format&fit=crop" 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
@@ -200,19 +200,18 @@ const Home = () => {
               icon={<FiStar />} 
             />
 
-            {/* 4. Brand Statement */}
             {/* 4. Brand Philosophy - Editorial Split Layout */}
-<div className="my-32 max-w-[1400px] mx-auto px-6">
+<div className="my-32 max-w-350 mx-auto px-6">
   <div className="flex flex-col md:flex-row items-center bg-zinc-50 rounded-[3rem] overflow-hidden">
     
  
 
     {/* 4. Brand Philosophy - Men's Editorial Layout */}
-<div className="my-32 max-w-[1400px] mx-auto px-6">
+<div className="my-32 max-w-350 mx-auto px-6">
   <div className="flex flex-col md:flex-row items-center bg-zinc-50 rounded-[3rem] overflow-hidden">
     
     {/* Left: Image Side (Men's Fashion) */}
-    <div className="w-full md:w-1/2 h-[500px] md:h-[600px] relative group">
+    <div className="w-full md:w-1/2 h-125 md:h-150 relative group">
       <img 
         src="https://images.unsplash.com/photo-1506634572416-48cdfe530110?q=80&w=1885&auto=format&fit=crop" 
         alt="Men's Fashion Editorial" 
@@ -257,7 +256,7 @@ const Home = () => {
             <Section 
               title="Trending Now" 
               subtitle="Viral Hits" 
-              products={data.trending}  // <--- CHANGED: Removed .slice(0,4)
+              products={data.trending}  
               tag="trending" 
               icon={<FiTrendingUp />} 
             />

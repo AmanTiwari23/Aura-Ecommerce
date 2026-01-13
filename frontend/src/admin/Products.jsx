@@ -64,7 +64,7 @@ const AdminProducts = () => {
         </button>
       </div>
 
-      {/* Conditional Form Rendering with Transition Feel */}
+      
       {showForm && (
         <div className="mb-12 p-6 bg-zinc-50 rounded-3xl border border-zinc-200">
           <div className="flex justify-between items-center mb-6 px-2">
@@ -81,7 +81,7 @@ const AdminProducts = () => {
         </div>
       )}
 
-      {/* Search & Filter Bar */}
+     
       <div className="relative mb-6">
         <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" />
         <input 
@@ -93,7 +93,7 @@ const AdminProducts = () => {
         />
       </div>
 
-      {/* Modern Product Table */}
+      
       <div className="bg-white rounded-2xl shadow-sm border border-zinc-100 overflow-hidden">
         <table className="w-full text-left">
           <thead>

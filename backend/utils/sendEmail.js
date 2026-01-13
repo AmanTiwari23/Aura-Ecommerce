@@ -1,16 +1,16 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
-  // 1. Create a transporter
+  
   const transporter = nodemailer.createTransport({
-    service: "Gmail", // Or use Host/Port if using Mailtrap
+    service: "Gmail", 
     auth: {
-      user: process.env.EMAIL_USER, // Your email address
-      pass: process.env.EMAIL_PASS, // Your App Password (not your regular password)
+      user: process.env.EMAIL_USER, 
+      pass: process.env.EMAIL_PASS, 
     },
   });
 
-  // 2. Define email options
+  
   const mailOptions = {
     from: `Aura Fashion <${process.env.EMAIL_USER}>`,
     to: options.email,
@@ -24,7 +24,7 @@ const sendEmail = async (options) => {
            </div>`,
   };
 
-  // 3. Send the email
+  
   await transporter.sendMail(mailOptions);
 };
 

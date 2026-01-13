@@ -20,12 +20,12 @@ const OrderTimeline = ({ status }) => {
     <div className="w-full py-12 px-4">
       <div className="relative flex items-center justify-between">
         
-        {/* Background Connector Line */}
-        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-zinc-100 -translate-y-1/2 z-0" />
+       
+        <div className="absolute top-1/2 left-0 w-full h-0.5 bg-zinc-100 -translate-y-1/2 z-0" />
         
-        {/* Active Progress Line */}
+       
         <div 
-          className="absolute top-1/2 left-0 h-[2px] bg-black -translate-y-1/2 z-0 transition-all duration-700 ease-in-out" 
+          className="absolute top-1/2 left-0 h-0.5 bg-black -translate-y-1/2 z-0 transition-all duration-700 ease-in-out" 
           style={{ width: `${(activeIndex / (steps.length - 1)) * 100}%` }}
         />
 
@@ -35,7 +35,7 @@ const OrderTimeline = ({ status }) => {
 
           return (
             <div key={step.label} className="relative z-10 flex flex-col items-center">
-              {/* Icon Circle */}
+             
               <div
                 className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 border-2 ${
                   isCompleted 
@@ -44,13 +44,13 @@ const OrderTimeline = ({ status }) => {
                 }`}
               >
                 <span className="text-xl">
-                    {/* If completed but not current, show a checkmark, else show step icon */}
+                    
                     {isCompleted && !isCurrent && index !== steps.length -1 ? <FiCheckCircle /> : step.icon}
                 </span>
               </div>
 
-              {/* Label */}
-              <div className="absolute top-14 flex flex-col items-center min-w-[100px]">
+           
+              <div className="absolute top-14 flex flex-col items-center min-w-25">
                 <span className={`text-[10px] uppercase tracking-[0.2em] font-black transition-colors duration-300 ${
                   isCompleted ? "text-black" : "text-zinc-400"
                 }`}>

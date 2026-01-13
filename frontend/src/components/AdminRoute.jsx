@@ -4,10 +4,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const AdminRoute = ({ children }) => {
-  // Destructure loading to prevent accidental redirects during initial boot
+  
   const { user, loading } = useSelector((state) => state.auth);
 
-  // 1. Show a clean loader while checking authentication status
+ 
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-white">
@@ -19,11 +19,11 @@ const AdminRoute = ({ children }) => {
     );
   }
 
-  // 2. Check for Admin Privileges
+  
   if (!user || user.role !== "admin") {
-    // Notify the user they don't have access
+    
     toast.error("Access Restricted: Administrator privileges required.", {
-      id: "admin-denied", // Prevents multiple toasts on re-renders
+      id: "admin-denied", 
       style: {
         borderRadius: '0px',
         background: '#000',
@@ -37,7 +37,7 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/" replace />;
   }
 
-  // 3. Render children (or Outlet for nested routes)
+  
   return children ? children : <Outlet />;
 };
 
