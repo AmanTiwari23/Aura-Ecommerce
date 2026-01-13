@@ -29,6 +29,8 @@ import AdminOrders from "./admin/AdminOrders";
 import AdminProducts from "./admin/Products";
 import AdminUsers from "./admin/Users";
 import AdminBanners from "./admin/AdminBanners"; // NEW: Added Banner Management Import
+import About from "./pages/About";
+import AdminCategories from "./admin/AdminCategories";
 
 /**
  * Utility: ScrollToTop
@@ -106,6 +108,7 @@ const App = () => {
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order-success/:id" element={<OrderSuccess />} />
+            <Route path="/about" element={<About />} />
 
             {/* --- User Protected Routes --- */}
             <Route element={<ProtectedRoutes />}>
@@ -130,6 +133,7 @@ const App = () => {
               <Route path="users" element={<AdminUsers />} />
               {/* NEW: Added Banner Route */}
               <Route path="banners" element={<AdminBanners />} /> 
+              <Route path="categories" element={<AdminCategories />} />
             </Route>
 
             {/* --- 404 Handling --- */}

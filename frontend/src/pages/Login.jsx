@@ -1,122 +1,127 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
+import { loginUser } from "../redux/authSlice"; // Importing your existing thunk
+import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
+  const { email, password } = formData;
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // To access redirect state
-  const { loading } = useSelector((state) => state.auth);
 
-  // 1. Calculate where to send the user after login
-  // If they came from a protected route, 'from' will be that route; otherwise Home.
-  const from = location.state?.from?.pathname || "/";
+  // Get state from your auth slice
+  const { user, loading, error } = useSelector((state) => state.auth);
 
-  const submitForm = async (e) => {
+  // 1. Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  // 2. Handle Input Changes
+  const onChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 3. Handle Submit
+  const submitHandler = async (e) => {
     e.preventDefault();
-    
-    const loginToast = toast.loading("Authenticating...");
-    
-    const res = await dispatch(loginUser({ email, password }));
-    
-    if (res.meta.requestStatus === "fulfilled") {
-      toast.success("Welcome back to Aura", { id: loginToast });
-      
-      // 2. Navigate to the intended destination
-      navigate(from, { replace: true }); 
+
+    if (!email || !password) {
+      return toast.error("Please fill in all fields");
+    }
+
+    // Dispatch the loginUser thunk from your slice
+    const resultAction = await dispatch(loginUser({ email, password }));
+
+    if (loginUser.fulfilled.match(resultAction)) {
+      toast.success("Welcome back!");
+      navigate("/"); // REDIRECT TO HOME
     } else {
-      toast.error(res.payload || "Invalid credentials", { id: loginToast });
+      // Show the error message returned from thunkAPI.rejectWithValue
+      toast.error(resultAction.payload || "Invalid Credentials");
     }
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-6 bg-white">
-      <div className="w-full max-w-md animate-in fade-in zoom-in-95 duration-500">
-        
-        {/* Header Section */}
+    <div className="min-h-[90vh] flex items-center justify-center bg-white px-6">
+      <div className="max-w-md w-full">
+        {/* Branding/Header */}
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-black uppercase tracking-tighter text-zinc-900">
-            Sign In
-          </h2>
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-2">
-            {from !== "/" ? `Login to continue to ${from.split('/')[1]}` : "Access your Aura account"}
+          <h1 className="text-4xl font-black uppercase tracking-tighter mb-2">Sign In</h1>
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.3em]">
+            Enter your details to access Aura
           </p>
         </div>
 
-        <form onSubmit={submitForm} className="space-y-6">
-          {/* Email Input */}
+        <form onSubmit={submitHandler} className="space-y-4">
+          {/* Email Field */}
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-black transition-colors">
-              <FiMail size={18} />
-            </div>
+            <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-black transition-colors" />
             <input
               type="email"
-              required
-              placeholder="Email Address"
-              className="w-full bg-zinc-50 border-none focus:ring-2 focus:ring-black rounded-xl p-4 pl-12 text-sm transition-all outline-none"
+              name="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          {/* Password Input */}
-          <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-black transition-colors">
-              <FiLock size={18} />
-            </div>
-            <input
-              type={showPassword ? "text" : "password"}
+              onChange={onChange}
+              placeholder="EMAIL ADDRESS"
+              className="w-full bg-zinc-50 border border-zinc-100 p-4 pl-12 text-[11px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:border-black transition-all rounded-xl"
               required
-              placeholder="Password"
-              className="w-full bg-zinc-50 border-none focus:ring-2 focus:ring-black rounded-xl p-4 pl-12 text-sm transition-all outline-none"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-400 hover:text-black transition-colors"
-            >
-              {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-            </button>
           </div>
 
-          {/* Helper Links */}
-          <div className="flex justify-between items-center px-1">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" className="w-3 h-3 accent-black rounded" />
-              <span className="text-[10px] font-bold uppercase text-zinc-400 tracking-widest">Remember Me</span>
-            </label>
-            <button type="button" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-black transition-colors">
+          {/* Password Field */}
+          <div className="relative group">
+            <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 group-focus-within:text-black transition-colors" />
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={onChange}
+              placeholder="PASSWORD"
+              className="w-full bg-zinc-50 border border-zinc-100 p-4 pl-12 text-[11px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:border-black transition-all rounded-xl"
+              required
+            />
+          </div>
+
+          {/* Forgot Password Link */}
+          <div className="text-right">
+            <Link to="/forgot-password" size={18} className="text-[10px] font-bold text-zinc-400 hover:text-black uppercase tracking-widest">
               Forgot Password?
-            </button>
+            </Link>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white py-4 rounded-xl font-black uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all shadow-xl shadow-zinc-100 disabled:bg-zinc-400 group"
+            className="w-full bg-black text-white p-5 rounded-xl text-[11px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 hover:bg-zinc-800 transition-all disabled:bg-zinc-200"
           >
-            {loading ? "Verifying..." : "Login to Account"}
-            {!loading && <FiArrowRight className="group-hover:translate-x-1 transition-transform" />}
+            {loading ? (
+              <span className="animate-pulse">Authenticating...</span>
+            ) : (
+              <>
+                Sign Into Account <FiArrowRight />
+              </>
+            )}
           </button>
         </form>
 
         {/* Footer Link */}
-        <p className="text-center mt-10 text-zinc-400 text-xs font-medium">
-          New to the collection?{" "}
-          <Link to="/register" className="text-black font-black uppercase tracking-widest hover:underline ml-1">
-            Register
-          </Link>
-        </p>
+        <div className="mt-12 text-center pt-8 border-t border-zinc-100">
+          <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-black hover:underline underline-offset-4 ml-1">
+              Create One Now
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../services/api";
 
+// --- Async Thunks ---
+
 export const registerUser = createAsyncThunk(
   "auth/register",
   async (formData, thunkAPI) => {
     try {
       const res = await api.post("/auth/register", formData);
+      // We save to localStorage here so refresh works immediately after signup
+      localStorage.setItem("userInfo", JSON.stringify(res.data.user));
       return res.data.user;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(err.response?.data?.message || "Registration failed");
     }
   }
 );
@@ -18,15 +22,22 @@ export const loginUser = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const res = await api.post("/auth/login", formData);
+      // Save to localStorage
+      localStorage.setItem("userInfo", JSON.stringify(res.data.user));
       return res.data.user;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data.message);
+      return thunkAPI.rejectWithValue(err.response?.data?.message || "Login failed");
     }
   }
 );
 
 export const logoutUser = createAsyncThunk("auth/logout", async () => {
-  await api.post("/auth/logout");
+  try {
+    await api.post("/auth/logout");
+  } finally {
+    // Always clear local storage even if the server-side logout fails
+    localStorage.removeItem("userInfo");
+  }
 });
 
 export const loadUser = createAsyncThunk("auth/load", async () => {
@@ -37,16 +48,31 @@ export const loadUser = createAsyncThunk("auth/load", async () => {
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    user: null,
+    // Check localStorage on bootup so user stays logged in
+    user: localStorage.getItem("userInfo") 
+      ? JSON.parse(localStorage.getItem("userInfo")) 
+      : null,
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    // Manual helper to set credentials (e.g., from a profile update)
+    setCredentials: (state, action) => {
+      state.user = action.payload;
+      localStorage.setItem("userInfo", JSON.stringify(action.payload));
+    },
+    // Important: Clear errors when navigating between login/register pages
+    clearError: (state) => {
+      state.error = null;
+    }
+  },
 
   extraReducers: (builder) => {
     builder
+      /* --- Register --- */
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -56,8 +82,11 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      /* --- Login --- */
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
@@ -67,13 +96,20 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      /* --- Logout --- */
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
+        state.loading = false;
+        state.error = null;
       })
+
+      /* --- Load User --- */
       .addCase(loadUser.fulfilled, (state, action) => {
         state.user = action.payload;
       });
   },
 });
 
+export const { setCredentials, clearError } = authSlice.actions;
 export default authSlice.reducer;

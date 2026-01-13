@@ -62,17 +62,77 @@ const addProduct = async (req, res) => {
   }
 };
 
+
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({ isActive: true })
-      .populate("categories", "name")
-      .sort({ createdAt: -1 });
+    const { 
+      keyword, 
+      category, 
+      tag, 
+      minPrice, 
+      maxPrice, 
+      color, 
+      sort 
+    } = req.query;
 
-    res.status(200).json(products);
+    let query = {};
+
+    // 1. Search (Name or Description)
+    if (keyword) {
+      query.$or = [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+      ];
+    }
+
+    // 2. Filter by Category
+    if (category) {
+      query.categories = category;
+    }
+
+    // 3. Filter by Tag
+    if (tag) {
+      query.tags = { $in: [tag] }; // Matches if product has this tag
+    }
+
+    // 4. Filter by Color
+    if (color) {
+      // Assumes colors are stored as strings e.g., ["Red", "Blue"]
+      query.colors = { $regex: new RegExp(color, "i") }; 
+    }
+
+    // 5. Filter by Price Range
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    // 6. Sorting Logic
+    let sortOptions = { createdAt: -1 }; // Default: Newest first
+
+    if (sort === "price_asc") {
+      sortOptions = { price: 1 }; // Low to High
+    } else if (sort === "price_desc") {
+      sortOptions = { price: -1 }; // High to Low
+    } else if (sort === "rating") {
+      sortOptions = { rating: -1 }; // Best rated first (assuming you have a rating field)
+    } else if (sort === "oldest") {
+      sortOptions = { createdAt: 1 };
+    }
+
+    // Execute Query
+    const products = await Product.find(query)
+      .populate("categories", "name")
+      .sort(sortOptions);
+
+    res.json(products);
+
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
+
 
 const getSingleProduct = async (req, res) => {
   try {
@@ -121,10 +181,61 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
+const updateProduct = async (req, res) => {
+  try {
+    const { name, price, description, categories, tags, colors, sizes, discountPrice } = req.body;
+    
+    // 1. Find the product
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    // 2. Helper to safely parse JSON strings from FormData
+    const safeParse = (data) => {
+      try {
+        return typeof data === "string" ? JSON.parse(data) : data;
+      } catch (e) {
+        return data ? data.split(",") : [];
+      }
+    };
+
+    // 3. Update Text Fields
+    product.name = name || product.name;
+    product.price = price || product.price;
+    product.description = description || product.description;
+    product.discountPrice = discountPrice || 0;
+
+    // 4. Update Arrays (Only if data is sent)
+    if (categories) product.categories = safeParse(categories);
+    if (tags) product.tags = safeParse(tags);
+    if (colors) product.colors = safeParse(colors);
+    if (sizes) product.sizes = safeParse(sizes);
+
+    // 5. Update Images (Only if new files are uploaded)
+    // If user uploaded new images, we replace the old ones. 
+    // If you want to append, use: [...product.images, ...newPaths]
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => file.path || file.secure_url);
+      product.images = newImages; 
+    }
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   addProduct,
   getAllProducts,
   getSingleProduct,
   getProductsByTag,
   deleteProduct,
+  updateProduct,
 };

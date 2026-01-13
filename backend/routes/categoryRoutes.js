@@ -1,17 +1,23 @@
 const express = require("express");
+const router = express.Router();
+
 
 const {
   createCategory,
   getAllCategories,
+  deleteCategory, 
 } = require("../controllers/categoryController");
 
-const {protect} = require("../middleware/authMiddleware");
-const {adminOnly} = require("../middleware/adminMiddleware");
+const { protect } = require("../middleware/authMiddleware");
+const { adminOnly } = require("../middleware/adminMiddleware");
 
-const router = express.Router();
 
-router.post("/",protect, adminOnly, createCategory);
+router.route("/")
+  .get(getAllCategories)
+  .post(protect, adminOnly, createCategory);
 
-router.get("/",getAllCategories);
+
+router.route("/:id")
+  .delete(protect, adminOnly, deleteCategory);
 
 module.exports = router;
