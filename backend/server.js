@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin:["https://your-frontend-url.vercel.app", "http://localhost:5173"],
+    origin:["https://aura-ecommerce-mu.vercel.app/", "http://localhost:5173"],
     credentials:true,
 })
 );
