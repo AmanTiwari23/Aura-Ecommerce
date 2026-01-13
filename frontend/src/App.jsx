@@ -31,6 +31,8 @@ import AdminUsers from "./admin/Users";
 import AdminBanners from "./admin/AdminBanners"; // NEW: Added Banner Management Import
 import About from "./pages/About";
 import AdminCategories from "./admin/AdminCategories";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 /**
  * Utility: ScrollToTop
@@ -73,31 +75,31 @@ const App = () => {
     <BrowserRouter>
       {/* Logic Utilities */}
       <ScrollToTop />
-      
+
       {/* Global Notifications */}
-      <Toaster 
+      <Toaster
         position="top-center"
         toastOptions={{
           duration: 3500,
           style: {
-            background: '#000',
-            color: '#fff',
-            borderRadius: '0px',
-            fontSize: '11px',
-            letterSpacing: '1px',
-            textTransform: 'uppercase',
-            fontWeight: '700'
+            background: "#000",
+            color: "#fff",
+            borderRadius: "0px",
+            fontSize: "11px",
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+            fontWeight: "700",
           },
           success: {
-            iconTheme: { primary: '#fff', secondary: '#000' }
-          }
+            iconTheme: { primary: "#fff", secondary: "#000" },
+          },
         }}
       />
 
       <div className="flex flex-col min-h-screen font-sans selection:bg-zinc-900 selection:text-white">
         <Navbar />
-        
-        <main className="flex-grow">
+
+        <main className="grow">
           <Routes>
             {/* --- Public Routes --- */}
             <Route path="/" element={<Home />} />
@@ -109,6 +111,8 @@ const App = () => {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/order-success/:id" element={<OrderSuccess />} />
             <Route path="/about" element={<About />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* --- User Protected Routes --- */}
             <Route element={<ProtectedRoutes />}>
@@ -126,27 +130,39 @@ const App = () => {
               }
             >
               {/* index is equivalent to path="/admin" */}
-              <Route index element={<Dashboard />} /> 
+              <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="orders" element={<AdminOrders />} />
               <Route path="products" element={<AdminProducts />} />
               <Route path="users" element={<AdminUsers />} />
               {/* NEW: Added Banner Route */}
-              <Route path="banners" element={<AdminBanners />} /> 
+              <Route path="banners" element={<AdminBanners />} />
               <Route path="categories" element={<AdminCategories />} />
             </Route>
 
             {/* --- 404 Handling --- */}
-            <Route path="*" element={
-              <div className="min-h-[70vh] flex flex-col items-center justify-center bg-white text-center px-6 relative overflow-hidden">
-                <span className="text-[120px] font-black leading-none text-zinc-100 absolute -z-10 select-none">404</span>
-                <h2 className="text-xl font-black uppercase tracking-widest text-zinc-900">Page Not Found</h2>
-                <p className="text-zinc-500 text-xs mt-2 uppercase tracking-[0.2em]">The collection you're looking for doesn't exist.</p>
-                <a href="/" className="mt-8 bg-black text-white px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all">
-                  Return Home
-                </a>
-              </div>
-            } />
+            <Route
+              path="*"
+              element={
+                <div className="min-h-[70vh] flex flex-col items-center justify-center bg-white text-center px-6 relative overflow-hidden">
+                  <span className="text-[120px] font-black leading-none text-zinc-100 absolute -z-10 select-none">
+                    404
+                  </span>
+                  <h2 className="text-xl font-black uppercase tracking-widest text-zinc-900">
+                    Page Not Found
+                  </h2>
+                  <p className="text-zinc-500 text-xs mt-2 uppercase tracking-[0.2em]">
+                    The collection you're looking for doesn't exist.
+                  </p>
+                  <a
+                    href="/"
+                    className="mt-8 bg-black text-white px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all"
+                  >
+                    Return Home
+                  </a>
+                </div>
+              }
+            />
           </Routes>
         </main>
 
