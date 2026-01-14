@@ -83,7 +83,7 @@ Follow these steps to run the project locally on your machine.
 - MongoDB Account (URI)
 
 ### 1. Clone the Repository
-```bash
+
 git clone [https://github.com/AmanTiwari23/Aura-Ecommerce.git](https://github.com/AmanTiwari23/Aura-Ecommerce.git)
 cd Aura-Ecommerce
 
@@ -91,7 +91,7 @@ cd Aura-Ecommerce
 ### 2. Backend Setup
 Navigate to the backend folder and install dependencies:
 
-```bash
+
 cd backend
 npm install
 
@@ -114,7 +114,7 @@ npm run server
 ## 3. Frontend Setup
 Open a new terminal, navigate to the frontend folder, and install dependencies:
 
-Bash
+
 
 cd frontend
 npm install
@@ -125,7 +125,7 @@ Code snippet
 VITE_API_URL=http://localhost:5000/api
 Start the React app:
 
-Bash
+
 
 npm run dev
 ## 🔒 Security Measures
