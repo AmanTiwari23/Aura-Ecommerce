@@ -12,20 +12,23 @@ const protect = async (req, res, next) => {
     
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  
-    const user = await User.findById(decoded.id).select("-password");
+    
+    const user = await User.findById(decoded.userId).select("-password");
 
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
 
+    
     if (user.isBlocked) {
       return res.status(403).json({ message: "User is blocked by admin" });
     }
 
+    
     req.user = user;
     next();
   } catch (err) {
+    console.error("Auth Middleware Error:", err.message);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
