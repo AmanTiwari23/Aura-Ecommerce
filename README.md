@@ -59,13 +59,17 @@ The application is fully responsive, designed with **Tailwind CSS**, and deploye
 
 | Landing Page | Product Details |
 |:---:|:---:|
-| ![Home](screenshots/homepage.png)(screenshots/home2.png) | ![Product](screenshots/productdetail.png) | 
-|[Whishlist](screenshots/wishlist.png)|
-|[Myorders](screenshots/myorderspage.png)|
+| ![Home](screenshots/homepage.png) | ![Product](screenshots/productdetail.png) | 
+
+| Whishlist Page | Myorders |
+|:---:|:---:|
+
+| ![Whishlist](screenshots/wishlist.png)|
+| ![Myorders](screenshots/myorderspage.png)|
 
 | Shopping Cart | Admin Dashboard |
 |:---:|:---:|
-| ![Cart](screenshots/shoppage.png)(screenshots/cartpage.png) | ![Admin](screenshots/admindashbord.png) (screenshots/admindashbord2.png)|
+| ![Cart](screenshots/cartpage.png) | ![Admin](screenshots/admindashbord.png) |
 
 ---
 
