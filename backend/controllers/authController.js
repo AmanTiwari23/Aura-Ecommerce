@@ -1,9 +1,9 @@
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-const sendEmail = require("../utils/sendEmail"); // 1. Import your email utility
+const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
 
-//     Register user
+// --- REGISTER USER ---
 const registerUser = async (req, res) => {
   try {
     const { email, name, password, role } = req.body;
@@ -13,17 +13,25 @@ const registerUser = async (req, res) => {
     if (userExist) return res.status(400).json({ message: "User already exists" });
 
     const user = await User.create({ name, email, password, role });
-    generateToken(res, user._id);
+    
+    // 1. Generate token (This sets the cookie)
+    const token = generateToken(res, user._id);
 
+    // 2. Return user AND token in JSON body (Crucial for Vercel)
     res.status(201).json({
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin,
+        token: token, // Frontend saves this to localStorage
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-//     Login user
+// --- LOGIN USER ---
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -35,22 +43,36 @@ const loginUser = async (req, res) => {
 
     if (user.isBlocked) return res.status(403).json({ message: "User is blocked" });
 
-    generateToken(res, user._id);
+    // 1. Generate token (This sets the cookie)
+    const token = generateToken(res, user._id);
+
+    // 2. Return user AND token in JSON body (Fixes 401 on Vercel)
     res.status(200).json({
-      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isAdmin: user.isAdmin,
+        token: token, // Frontend saves this to localStorage
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-//     Logout user
+// --- LOGOUT USER ---
 const logoutUser = (req, res) => {
-  res.cookie("token", "", { httpOnly: true, expires: new Date(0) });
-  res.status(200).json({ message: "Logged out" });
+  // Clear the cookie for local development
+  res.cookie("token", "", { 
+    httpOnly: true, 
+    expires: new Date(0),
+    secure: true,      // Match production settings
+    sameSite: "none"   // Match production settings
+  });
+  res.status(200).json({ message: "Logged out successfully" });
 };
 
-//    Update Password (Logged-in user)
+// --- UPDATE PASSWORD ---
 const updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -68,7 +90,7 @@ const updatePassword = async (req, res) => {
   }
 };
 
-//   Forgot Password - Send OTP to Email
+// --- FORGOT PASSWORD ---
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -76,40 +98,33 @@ const forgotPassword = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     
-    // Save OTP and Expiry to User Model (10 mins)
     user.resetPasswordOTP = otp;
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    // --- NODEMAILER INTEGRATION ---
     try {
       await sendEmail({
         email: user.email,
         subject: "Your Aura Password Reset Code",
-        otp: otp, // Passing the OTP to the utility for the HTML template
+        otp: otp,
         message: `Your password reset OTP is: ${otp}. It is valid for 10 minutes.`,
       });
 
       res.status(200).json({ message: "OTP sent to your email" });
     } catch (emailError) {
-      // If email fails, clear the DB fields so user can try again
       user.resetPasswordOTP = undefined;
       user.resetPasswordExpires = undefined;
       await user.save();
-      
-      console.error("Email Error:", emailError);
-      return res.status(500).json({ message: "Error sending email. Try again later." });
+      return res.status(500).json({ message: "Error sending email." });
     }
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-//     Reset Password via OTP
+// --- RESET PASSWORD ---
 const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
